@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신경 경로 탐색기</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+        .pathway-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            background-color: #e2e8f0; 
+            color: #334155;
+            font-weight: 500;
+            font-size: 1.1rem;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            min-width: 100px;
+            flex-shrink: 0;
+        }
+        .pathway-step.highlight {
+            background-color: #60a5fa;
+            color: #ffffff;
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(96, 165, 250, 0.3);
+        }
+        .arrow {
+            font-size: 24px;
+            color: #94a3b8;
+            margin: 0 5px;
+            transition: color 0.3s ease;
+        }
+        .arrow.highlight {
+            color: #60a5fa;
+        }
+        .pathway-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        .button-group button {
+            background-color: #e2e8f0;
+            color: #334155;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .button-group button:hover {
+            background-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .button-group button.active {
+            background-color: #3b82f6;
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">신경 경로 탐색기</h1>
+        <p class="text-gray-600 mb-8">아래 버튼을 클릭하여 각 반응의 신경 경로를 확인해보세요.</p>
+
+        <div class="button-group flex flex-wrap justify-center gap-4 mb-10">
+            <button id="btn-conscious" class="px-6 py-3 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                의식적인 반응
+            </button>
+            <button id="btn-unconditional" class="px-6 py-3 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+                무조건 반사
+            </button>
+            <button id="btn-conditioned" class="px-6 py-3 font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
+                조건 반사
+            </button>
+        </div>
+
+        <div class="pathway-display" id="pathway-display">
+            <!-- Pathway elements will be dynamically inserted here -->
+            <div id="step-stimulus" class="pathway-step">자극</div>
+            <span class="arrow">&#8594;</span>
+            <div id="step-sensory-organ" class="pathway-step">감각 기관</div>
+            <span class="arrow">&#8594;</span>
+            <div id="step-sensory-nerve" class="pathway-step">감각 신경</div>
+            <span class="arrow">&#8594;</span>
+            <div id="step-spinal-cord-brainstem-midbrain" class="pathway-step">척수 / 연수 / 중간뇌</div>
+            <span class="arrow">&#8594;</span>
+            <div id="step-cerebrum" class="pathway-step">대뇌</div>
+            <span class="arrow">&#8594;</span>
+            <div id="step-motor-nerve" class="pathway-step">운동 신경</div>
+            <span class="arrow">&#8594;</span>
+            <div id="step-effector" class="pathway-step">반응 기관</div>
+            <span class="arrow">&#8594;</span>
+            <div id="step-response" class="pathway-step">반응</div>
+        </div>
+
+        <div id="description" class="mt-8 p-4 bg-gray-100 rounded-lg text-gray-700 text-left">
+            <h3 class="text-lg font-semibold mb-2">경로 설명:</h3>
+            <p>위 버튼을 클릭하여 각 반응의 경로와 설명을 확인하세요.</p>
+        </div>
+    </div>
+
+    <script>
+        // 각 신경 경로 정의
+        const pathways = {
+            conscious: {
+                steps: ['stimulus', 'sensory-organ', 'sensory-nerve', 'spinal-cord-brainstem-midbrain', 'cerebrum', 'motor-nerve', 'effector', 'response'],
+                description: `
+                    <h3 class="text-lg font-semibold mb-2">의식적인 반응의 경로:</h3>
+                    <p>의식적인 반응은 자극이 감각 기관을 통해 감각 신경으로 전달된 후, 척수를 거쳐 대뇌로 이동하여 인지되고 판단되는 과정을 포함합니다. 대뇌에서 내려진 명령은 운동 신경을 통해 반응 기관에 전달되어 최종적인 반응을 일으키며, 이는 의도적이고 자율적인 행동을 가능하게 하는 경로입니다.</p>
+                `
+            },
+            unconditional: {
+                steps: ['stimulus', 'sensory-organ', 'sensory-nerve', 'spinal-cord-brainstem-midbrain', 'motor-nerve', 'effector', 'response'],
+                description: `
+                    <h3 class="text-lg font-semibold mb-2">무조건 반사의 경로:</h3>
+                    <p>무조건 반사는 자극이 감각 기관을 통해 감각 신경으로 전달된 후, 대뇌를 거치지 않고 척수, 연수 또는 중간뇌와 같은 하위 중추에서 직접 운동 신경을 통해 반응 기관에 명령을 내려 반응이 일어나는 경로입니다. 이는 위험 상황에서 빠르게 대처하거나 생명 유지를 위한 본능적인 반응으로, 학습되지 않은 선천적인 특징을 가집니다.</p>
+                `
+            },
+            conditioned: {
+                steps: ['stimulus', 'sensory-organ', 'sensory-nerve', 'cerebrum', 'motor-nerve', 'effector', 'response'],
+                description: `
+                    <h3 class="text-lg font-semibold mb-2">조건 반사의 경로:</h3>
+                    <p>조건 반사는 자극이 감각 기관을 통해 감각 신경으로 전달된 후 대뇌로 이동하여 학습된 정보와 연합되는 과정을 거칩니다. 대뇌에서 처리된 명령은 운동 신경을 통해 반응 기관에 전달되어 반응이 일어나며, 이는 파블로프의 개 실험처럼 특정 자극과 경험이 반복적으로 연결되어 새로운 반응을 형성하는 학습된 반응으로, 대뇌의 역할이 매우 중요하게 작용합니다.</p>
+                `
+            }
+        };
+
+        // DOM 요소 가져오기
+        const btnConscious = document.getElementById('btn-conscious');
+        const btnUnconditional = document.getElementById('btn-unconditional');
+        const btnConditioned = document.getElementById('btn-conditioned');
+        const pathwayDisplay = document.getElementById('pathway-display');
+        const descriptionDiv = document.getElementById('description');
+
+        // 모든 경로 단계 요소 가져오기
+        const allPathwaySteps = document.querySelectorAll('.pathway-step');
+        const allArrows = document.querySelectorAll('.arrow');
+        const allButtons = document.querySelectorAll('.button-group button');
+
+        // 경로 하이라이트 및 설명 업데이트 함수
+        function updatePathwayDisplay(type) {
+            // 모든 하이라이트 제거
+            allPathwaySteps.forEach(step => step.classList.remove('highlight'));
+            allArrows.forEach(arrow => arrow.classList.remove('highlight'));
+            allButtons.forEach(button => button.classList.remove('active'));
+
+            // 선택된 타입의 경로 하이라이트
+            const currentPathway = pathways[type];
+            if (currentPathway) {
+                currentPathway.steps.forEach(stepId => {
+                    const stepElement = document.getElementById(`step-${stepId}`);
+                    if (stepElement) {
+                        stepElement.classList.add('highlight');
+                    }
+                });
+
+                // 화살표 하이라이트
+                const pathwayStepIds = currentPathway.steps;
+                for (let i = 0; i < pathwayStepIds.length - 1; i++) {
+                    const currentStepElement = document.getElementById(`step-${pathwayStepIds[i]}`);
+                    const nextStepElement = document.getElementById(`step-${pathwayStepIds[i+1]}`);
+                    if (currentStepElement && nextStepElement) {
+                        let current = currentStepElement.nextElementSibling;
+                        while (current && current !== nextStepElement) {
+                            if (current.classList.contains('arrow')) {
+                                current.classList.add('highlight');
+                            }
+                            current = current.nextElementSibling;
+                        }
+                    }
+                }
+
+                // 설명 업데이트
+                descriptionDiv.innerHTML = currentPathway.description;
+            }
+        }
+
+        // 버튼 클릭 이벤트 리스너
+        btnConscious.addEventListener('click', () => {
+            updatePathwayDisplay('conscious');
+            btnConscious.classList.add('active');
+        });
+
+        btnUnconditional.addEventListener('click', () => {
+            updatePathwayDisplay('unconditional');
+            btnUnconditional.classList.add('active');
+        });
+
+        btnConditioned.addEventListener('click', () => {
+            updatePathwayDisplay('conditioned');
+            btnConditioned.classList.add('active');
+        });
+
+        window.onload = () => {
+            updatePathwayDisplay('conscious');
+            btnConscious.classList.add('active');
+        };
+    </script>
+</body>
+</html>
