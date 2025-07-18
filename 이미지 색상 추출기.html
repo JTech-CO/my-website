@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이미지 색상 추출기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #uploadedImage {
+            max-width: 100%;
+            max-height: 400px;
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            cursor: crosshair;
+        }
+        #colorCode {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            display: inline-block;
+            min-width: 80px;
+        }
+        #colorPreview {
+            width: 380px;
+            height: 30px;
+            margin-top: 10px;
+            border: 2px solid #ccc;
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* freeze 상태 표시 */
+        .frozen #colorCode,
+        .frozen #colorPreview {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="container">
+    <h1>이미지 색상 추출기</h1>
+    <input type="file" id="imageInput" accept="image/*"><br>
+    <img id="uploadedImage" alt="업로드된 이미지가 여기에 표시됩니다"><br>
+    <button onclick="enableColorExtraction()">색상 추출</button>
+    <p style="margin-top:10px; font-size:14px; color:#555;">
+        * 이미지 위에서 스페이스바 누르면 현재 색상 고정, 다시 누르면 해제
+    </p>
+    <div id="colorInfo">
+        <p>실시간 색상코드: <span id="colorCode">#FFFFFF</span></p>
+        <div id="colorPreview"></div>
+    </div>
+</div>
+
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const uploadedImage = document.getElementById('uploadedImage');
+    const colorCode = document.getElementById('colorCode');
+    const colorPreview = document.getElementById('colorPreview');
+    const container = document.getElementById('container');
+    let imageCanvas, imageContext;
+    let freeze = false;
+
+    // 이미지 업로드 핸들링
+    imageInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            uploadedImage.src = e.target.result;
+            createCanvas();
+        };
+
+        if (file) reader.readAsDataURL(file);
+    });
+
+    // 캔버스 생성
+    function createCanvas() {
+        imageCanvas = document.createElement('canvas');
+        imageContext = imageCanvas.getContext('2d');
+        uploadedImage.onload = function() {
+            imageCanvas.width = uploadedImage.width;
+            imageCanvas.height = uploadedImage.height;
+            imageContext.drawImage(uploadedImage, 0, 0, uploadedImage.width, uploadedImage.height);
+        };
+    }
+
+    // 색상 추출 활성화
+    function enableColorExtraction() {
+        uploadedImage.addEventListener('mousemove', extractColor);
+    }
+
+    // 색상 추출 함수
+    function extractColor(event) {
+        if (freeze) return;
+        const rect = uploadedImage.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const pixel = imageContext.getImageData(x, y, 1, 1).data;
+        const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
+        colorCode.textContent = hex;
+        colorPreview.style.backgroundColor = hex;
+    }
+
+    // RGB를 HEX로 변환
+    function rgbToHex(r, g, b) {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b)
+            .toString(16).slice(1).toUpperCase();
+    }
+
+    // 스페이스바로 freeze 토글
+    document.addEventListener('keydown', function(e) {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            freeze = !freeze;
+            container.classList.toggle('frozen', freeze);
+        }
+    });
+</script>
+
+</body>
+</html>
