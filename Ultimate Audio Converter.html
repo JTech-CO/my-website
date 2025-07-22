@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Audio Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .upload-box {
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .upload-box:hover {
+            border-color: #3b82f6;
+            background-color: #f9fafb;
+        }
+        .format-button {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .format-button:hover {
+            transform: translateY(-2px);
+        }
+        /* 그리드 레이아웃 */
+        .format-grid {
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+<div class="container bg-white p-6 md:p-8 rounded-2xl shadow-lg w-11/12 max-w-2xl mx-auto">
+    <h1 id="converterTitle" class="text-3xl font-bold text-center text-gray-800 mb-6">Ultimate Audio Converter</h1>
+
+    <!-- 파일 업로드 -->
+    <div id="uploadBox" class="upload-box border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer mb-6"
+         ondragover="handleDragOver(event)" ondrop="handleFileDrop(event)" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept="audio/*" class="hidden" onchange="handleFileSelect(event)">
+        <p class="text-gray-500 mb-2">음원 파일을 여기에 드래그 앤 드롭하거나 클릭하세요</p>
+        <p class="text-sm text-gray-400">(MP3, WAV, FLAC, OGG 등)</p>
+    </div>
+
+    <!-- 업로드된 음원 정보 -->
+    <div id="audioInfo" class="hidden bg-gray-50 p-4 rounded-lg mb-6">
+        <p class="text-gray-700 font-medium mb-2">업로드된 파일: <span id="uploadedFileName" class="font-normal"></span></p>
+        <audio id="uploadedAudio" controls class="w-full"></audio>
+    </div>
+
+    <!-- 변환 형식 선택 -->
+    <div class="mt-6">
+        <h2 class="text-lg font-semibold text-gray-700 text-center mb-4">변환할 포맷을 선택하세요</h2>
+        <div class="format-grid grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('aac')">AAC</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('aif')">AIF</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('aiff')">AIFF</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('ape')">APE</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('caf')">CAF</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('dff')">DFF</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('dsf')">DSF</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('flac')">FLAC</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('m4a')">M4A</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('mp3')">MP3</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('ogg')">OGG</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('opus')">OPUS</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('wav')">WAV</button>
+            <button class="format-button bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onclick="downloadAudio('wma')">WMA</button>
+        </div>
+    </div>
+
+    <!-- 상태 메시지 -->
+    <div id="statusMessage" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-6" role="alert">
+        <span class="block sm:inline"></span>
+    </div>
+
+    <p class="text-center text-gray-400 text-sm mt-6">
+        <span class="block">© 2025 JTech CO. Ultimate Audio Converter. All rights reserved.</span>
+    </p>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadBox = document.getElementById('uploadBox');
+    const audioInfo = document.getElementById('audioInfo');
+    const uploadedFileName = document.getElementById('uploadedFileName');
+    const uploadedAudio = document.getElementById('uploadedAudio');
+    const statusMessage = document.getElementById('statusMessage');
+
+    let uploadedFile = null;
+
+    // 드래그 오버 이벤트
+    function handleDragOver(event) {
+        event.preventDefault();
+        uploadBox.classList.add('border-blue-500', 'bg-blue-50');
+    }
+
+    // 파일 드롭 이벤트
+    function handleFileDrop(event) {
+        event.preventDefault();
+        uploadBox.classList.remove('border-blue-500', 'bg-blue-50');
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+            processFile(files[0]);
+        }
+    }
+
+    // 파일 선택 이벤트
+    function handleFileSelect(event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            processFile(files[0]);
+        }
+    }
+
+    // 파일 처리
+    function processFile(file) {
+        if (!file.type.startsWith('audio/')) {
+            statusMessage.textContent = '오디오 파일만 업로드할 수 있습니다.';
+            statusMessage.classList.remove('hidden');
+            audioInfo.classList.add('hidden');
+            uploadedFile = null;
+            return;
+        }
+
+        uploadedFile = file;
+        uploadedFileName.textContent = file.name;
+        uploadedAudio.src = URL.createObjectURL(file);
+        audioInfo.classList.remove('hidden');
+        statusMessage.classList.add('hidden');
+    }
+
+    // 음원 다운로드
+    function downloadAudio(format) {
+        if (!uploadedFile) {
+            statusMessage.textContent = '음원 파일을 먼저 업로드하세요.';
+            statusMessage.classList.remove('hidden');
+            return;
+        }
+
+        // 실제 오디오 데이터를 '변환'하지 않으며, 단순히 파일의 컨테이너(확장자)만 변경하여 다운로드합니다.
+        // 파일 내용의 인코딩을 바꾸는 게 아닌 컨테이너 값만 바꿔서 다운로드 --> 웬만해서는 오류가 안 납니다.
+        // FFmpeg Lib을 WASM으로 포팅하는 방식은 나중에 만들 예정입니다.
+        
+        // 지금 이 주석을 보고 있으시다면 페이지 소스 보기 또는 Ctrl + U를 눌렀을 것 같습니다.
+        // 그렇다면 메인 화면에서 새로고침 한 번 하고 그냥 U도 눌러 보세요. UwU 
+        
+        statusMessage.innerHTML = `<p>'.${format}'으로 다운로드를 시도합니다. <br> 확장자만 변환하는 것으로, 파일이 손상되거나 재생되지 않을 수 있습니다.</p>`;
+        statusMessage.classList.remove('hidden');
+
+        fetch(uploadedAudio.src)
+            .then(res => res.blob())
+            .then(blob => {
+                const originalName = uploadedFile.name.substring(0, uploadedFile.name.lastIndexOf('.'));
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `${originalName}.${format}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            })
+            .catch(e => {
+                statusMessage.textContent = `다운로드 중 오류가 발생했습니다: ${e.message}`;
+                statusMessage.classList.remove('hidden');
+            });
+    }
+
+    // U
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'U' || event.key === 'u') {
+            window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+        }
+    });
+</script>
+
+</body>
+</html>
