@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>민생지원금</title> <!--제작자: JTech_CO-->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+        }
+        .chartjs-tooltip {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif !important;
+        }
+        .section-fade {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-4xl">
+        <!-- 헤더 -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">민생회복 지원금 핵심 정보</h1>
+            <p class="text-gray-600">정부의 민생회복 지원 정책에 대한 모든 정보를 알기 쉽게 정리했습니다.</p>
+        </header>
+
+        <!-- 개요 -->
+        <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-blue-600">📋 민생회복 지원금이란?</h2>
+            <p class="text-gray-700 leading-relaxed">
+                민생경제 회복을 위한 특단의 조치로, 소비를 활성화하고 소상공인 및 자영업자의 매출 확대를 돕기 위해 정부가 전 국민을 대상으로 지급하는 지원금입니다. '민생회복 소비쿠폰'이라고도 불립니다.
+            </p>
+        </section>
+
+        <!-- 지원 대상 및 금액 -->
+        <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-2 text-blue-600">📊 지원 대상 및 금액</h2>
+            <p class="text-gray-600 mb-6">아래 버튼을 클릭하여 그룹별 지원 금액을 확인해 보세요.</p>
+            
+            <div id="user-group-buttons" class="flex flex-wrap justify-center gap-2 mb-6">
+                <button data-group="general" class="group-btn bg-blue-500 text-white px-4 py-2 rounded-full font-semibold shadow hover:bg-blue-600 transition-all duration-200">일반국민</button>
+                <button data-group="lowIncome" class="group-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-semibold shadow hover:bg-gray-300 transition-all duration-200">차상위·한부모</button>
+                <button data-group="recipient" class="group-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-semibold shadow hover:bg-gray-300 transition-all duration-200">기초수급자</button>
+                <button data-group="top10" class="group-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-semibold shadow hover:bg-gray-300 transition-all duration-200">상위 10%</button>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 items-center">
+                <div>
+                    <canvas id="supportAmountChart"></canvas>
+                </div>
+                <div id="chart-description" class="text-center md:text-left bg-blue-50 p-4 rounded-lg">
+                </div>
+            </div>
+             <div class="mt-6 text-sm text-gray-500 bg-gray-100 p-4 rounded-lg">
+                <p><strong class="font-semibold text-gray-700">💡 추가 지원 안내</strong></p>
+                <p>• <strong class="text-indigo-600">비수도권 거주자:</strong> 1차 지급 시 3만원 추가 지원</p>
+                <p>• <strong class="text-indigo-600">농어촌 인구감소지역 거주자:</strong> 1차 지급 시 5만원 추가 지원</p>
+                <p class="mt-2">* 추가 지원은 중복 적용되지 않으며, 더 유리한 조건 하나만 적용됩니다.</p>
+            </div>
+        </section>
+
+        <!-- 신청 및 사용 기간 -->
+        <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-blue-600">🗓️ 신청 및 사용 기간</h2>
+            <div class="space-y-4">
+                <div class="bg-gray-100 p-4 rounded-lg"><h3 class="font-semibold text-lg text-gray-800">1️⃣ 1차 지급</h3><p class="text-gray-600"><strong class="font-medium">신청 기간:</strong> 2025년 7월 21일 (월) ~ 9월 12일 (금)</p></div>
+                <div class="bg-gray-100 p-4 rounded-lg"><h3 class="font-semibold text-lg text-gray-800">2️⃣ 2차 지급</h3><p class="text-gray-600"><strong class="font-medium">신청 기간:</strong> 2025년 9월 22일 (월) ~ 10월 31일 (금)</p></div>
+                <div class="bg-red-100 border-l-4 border-red-500 p-4 rounded-lg"><h3 class="font-semibold text-lg text-red-800">❗️ 사용 마감</h3><p class="text-red-700"><strong class="font-medium">공통 사용 기한:</strong> 2025년 11월 30일 (일) 까지</p><p class="text-red-700 text-sm mt-1">* 기간 내 사용하지 않은 잔액은 소멸됩니다.</p></div>
+            </div>
+        </section>
+
+        <!-- 사용처 -->
+        <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-blue-600">🛒 사용처 안내</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200"><h3 class="text-xl font-semibold text-green-800 mb-3">✅ 사용 가능 업종</h3><ul class="space-y-2 text-gray-700"><li class="flex items-start"><span class="mr-2 mt-1">🍽️</span><span>전통시장, 동네 마트, 식당, 미용실, 안경점 등</span></li><li class="flex items-start"><span class="mr-2 mt-1">💊</span><span>약국, 의원, 병원, 학원 등</span></li><li class="flex items-start"><span class="mr-2 mt-1">☕</span><span>프랜차이즈 가맹점 (편의점, 빵집, 카페 등)</span></li><li class="flex items-start"><span class="mr-2 mt-1">⛽</span><span>주유소 (지역 가맹점에 한함)</span></li><li class="flex items-start"><span class="mr-2 mt-1">🚕</span><span>택시 (지역 가맹 택시에 한함)</span></li><li class="flex items-start"><span class="mr-2 mt-1">🛵</span><span>배달앱 (단, 현장 결제 시 사용 가능)</span></li></ul><p class="text-xs text-gray-500 mt-4">* 기본적으로 주소지 내 지역사랑상품권 가맹점 또는 연매출 30억 이하 매장에서 사용 가능합니다.</p></div>
+                <div class="bg-red-50 p-4 rounded-lg border border-red-200"><h3 class="text-xl font-semibold text-red-800 mb-3">❌ 사용 불가 업종</h3><ul class="space-y-2 text-gray-700"><li class="flex items-start"><span class="mr-2 mt-1">🏢</span><span>대형마트, 백화점, 복합쇼핑몰</span></li><li class="flex items-start"><span class="mr-2 mt-1">🌐</span><span>온라인 쇼핑몰 (쿠팡, 네이버 등)</span></li><li class="flex items-start"><span class="mr-2 mt-1">🏢</span><span>대기업 직영 프랜차이즈 매장</span></li><li class="flex items-start"><span class="mr-2 mt-1">🍾</span><span>유흥업소, 사행성 업종</span></li><li class="flex items-start"><span class="mr-2 mt-1">🚌</span><span>버스, 지하철 등 대중교통 요금</span></li><li class="flex items-start"><span class="mr-2 mt-1">🧾</span><span>보험료, 세금, 통신료 등 공과금</span></li></ul></div>
+            </div>
+        </section>
+
+        <!-- 자주 묻는 질문 (FAQ) -->
+        <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-blue-600">❓ 자주 묻는 질문 (FAQ)</h2>
+            <div class="space-y-3" id="faq-container"></div>
+        </section>
+
+        <!-- 지역별 안내 -->
+        <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-blue-600">📍 지역별 상세 정보 조회</h2>
+            <p class="text-gray-600 mb-6">
+                지역사랑상품권 종류, 가맹점 등 거주하시는 지역의 상세 정보는 행정안전부의 '내 고장 알리미' 통합 플랫폼에서 직접 조회하실 수 있습니다.
+            </p>
+            <div class="text-center">
+                <a href="https://www.laiis.go.kr/lips/mlo/lcl/localGiftList.do" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-green-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors text-base shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                    내 고장 알리미에서 조회하기
+                </a>
+            </div>
+        </section>
+
+        <!-- 카드사별 신청 안내 -->
+        <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-blue-600">💳 카드사별 신청 안내</h2>
+            <p class="text-gray-600 mb-6">
+                사용하시는 카드를 선택하여 민생회복 지원금 신청 페이지로 바로 이동할 수 있습니다.
+            </p>
+            <div id="card-links-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
+            </div>
+        </section>
+
+        <!-- 푸터 -->
+    <footer class="text-center mt-10 text-sm text-gray-500">
+        <p>본 페이지는 제공된 공식 자료를 바탕으로 제작된 정보 안내 페이지입니다.</p>
+        <p>최신 정보 및 세부 사항은 행정안전부 및 각 지자체 공식 홈페이지를 참고하시기 바랍니다.</p>
+        <p>
+            <a href="https://www.mois.go.kr/frt/sub/a06/b07/livelihoodCoupon/screen.do" target="_blank" rel="noopener noreferrer" style="color: blue; text-decoration: underline;">
+            행정안전부 홈페이지 바로가기 </a>
+        </p>
+    </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- 데이터 ---
+            const supportData = {
+                general: { label: '일반국민', amounts: [15, 10], description: "<strong>일반국민</strong>은 1차 15만원, 2차 10만원으로 <strong>총 25만원</strong>을 지원받습니다. 비수도권/인구감소지역 거주 시 추가 지원금이 있습니다." },
+                lowIncome: { label: '차상위·한부모', amounts: [30, 10], description: "<strong>차상위계층 및 한부모가족</strong>은 1차 30만원, 2차 10만원으로 <strong>총 40만원</strong>을 지원받습니다. 비수도권/인구감소지역 거주 시 추가 지원금이 있습니다." },
+                recipient: { label: '기초수급자', amounts: [40, 10], description: "<strong>기초생활수급자</strong>는 1차 40만원, 2차 10만원으로 <strong>총 50만원</strong>을 지원받습니다. 비수도권/인구감소지역 거주 시 추가 지원금이 있습니다." },
+                top10: { label: '상위 10%', amounts: [15, 0], description: "<strong>상위 10%</strong>는 1차 15만원을 지원받으며, 2차 추가 지급 대상에서는 제외됩니다. 비수도권/인구감소지역 거주 시 추가 지원금이 있습니다." }
+            };
+
+            const faqData = [
+                { q: "외국인도 지원금을 받을 수 있나요?", a: "원칙적으로 대한민국 국민을 대상으로 하므로 제외됩니다. 다만, 내국인과 동일한 건강보험 자격을 갖춘 결혼이민자, 영주권자 등 일부는 예외적으로 지급 대상에 포함될 수 있습니다." },
+                { q: "미성년자도 직접 신청할 수 있나요?", a: "아니요, 미성년자(2007년 1월 1일 이후 출생자)는 원칙적으로 세대주가 대신 신청해야 합니다. 단, 예외적인 경우(세대주가 없거나, 세대주가 신청 불가능한 경우 등)에는 직접 신청이 가능할 수 있습니다." },
+                { q: "신청 기간을 놓치면 어떻게 되나요?", a: "지정된 신청 기간(1차, 2차)이 지나면 신청할 수 없으므로, 반드시 기간 내에 신청해야 지원금을 받을 수 있습니다." },
+                { q: "이사하면 사용 지역을 변경할 수 있나요?", a: "네, 이사 후 전입신고를 마쳤다면 변경된 주소지에서 지원금을 사용할 수 있습니다. 단, 이미 지급받은 카드의 종류(선불카드 등)에 따라 사용 지역 변경이 제한될 수 있으니, 주민센터에 문의하는 것이 가장 정확합니다." },
+                { q: "배달앱에서 사용하고 싶은데, 어떻게 해야 하나요?", a: "배달앱을 통해 주문하더라도, 결제 방식이 '만나서 결제' 또는 '현장 결제'인 경우에만 지원금 사용이 가능합니다. 앱 내에서 미리 결제하는 방식은 대부분 사용이 불가능합니다." }
+            ];
+            
+            const cardData = [
+                { name: '신한카드', url: 'https://www.shinhancard.com/pconts/html/myPage/governmentSupport/MOBFM591N/MOBFM591NR01.html' },
+                { name: '삼성카드', url: 'https://www.samsungcard.com/personal/aid/UHPPAS1401M0.jsp?click=ms_event_directauto' },
+                { name: '롯데카드', url: 'https://jiwon3.lottecard.co.kr/app/LPEMREA_V100.lc#none' },
+                { name: '우리카드', url: 'https://m.wooricard.com/dcmw/CONTENTS/CNTNTS/yh1/M1MCD204S49.do' },
+                { name: '하나카드', url: 'https://m.hanacard.co.kr/MKGAAV9000M.web'},
+                { name: 'NH농협카드', url: 'https://nhpay.nonghyup.com/vu/VU400000F' },
+                { name: 'KB국민카드', url: 'https://m.kbcard.com/BON/DVIEW/MBEM0014' },
+                { name: 'BC카드', url: 'https://go.bccard.com/' },
+                { name: '카카오뱅크', url: 'https://www.kakaobank.com/Corp/News/Notices/view/17186' },
+                { name: '토스뱅크', url: 'https://www.tossbank.com/articles/livelihoodcoupon-2025' },
+                { name: '네이버페이', url: 'https://new-m.pay.naver.com/gov/sobicoupon' }
+            ];
+
+            // --- 차트 ---
+            const ctx = document.getElementById('supportAmountChart').getContext('2d');
+            const chartDescriptionEl = document.getElementById('chart-description');
+            let supportChart;
+            function createOrUpdateChart(groupKey) {
+                const data = supportData[groupKey];
+                chartDescriptionEl.innerHTML = `<h3 class="text-xl font-bold mb-2 text-gray-900">${data.label} 지원금액</h3><p class="leading-relaxed text-gray-700">${data.description}</p>`;
+                chartDescriptionEl.classList.add('section-fade');
+                setTimeout(() => chartDescriptionEl.classList.remove('section-fade'), 500);
+                if (supportChart) {
+                    supportChart.data.datasets[0].data = data.amounts;
+                    supportChart.data.datasets[0].label = data.label + ' 지원금 (만원)';
+                    supportChart.update();
+                } else {
+                    supportChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['1차 지급', '2차 지급'],
+                            datasets: [{
+                                label: data.label + ' 지원금 (만원)',
+                                data: data.amounts,
+                                backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(167, 139, 250, 0.7)'],
+                                borderColor: ['rgba(59, 130, 246, 1)', 'rgba(167, 139, 250, 1)'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.raw}만원` } } },
+                            scales: { y: { beginAtZero: true, title: { display: true, text: '금액 (만원)' } } }
+                        }
+                    });
+                }
+            }
+            document.querySelectorAll('.group-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.group-btn').forEach(btn => {
+                        btn.classList.remove('bg-blue-500', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    });
+                    button.classList.add('bg-blue-500', 'text-white');
+                    button.classList.remove('bg-gray-200', 'text-gray-700');
+                    createOrUpdateChart(button.dataset.group);
+                });
+            });
+
+            // --- FAQ ---
+            const faqContainer = document.getElementById('faq-container');
+            faqData.forEach(item => {
+                const faqItem = document.createElement('div');
+                faqItem.className = 'border border-gray-200 rounded-lg';
+                faqItem.innerHTML = `<button class="w-full flex justify-between items-center text-left p-4 focus:outline-none"><span class="font-semibold text-gray-800">${item.q}</span><svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button><div class="px-4 pb-4 text-gray-600 leading-relaxed hidden">${item.a}</div>`;
+                faqContainer.appendChild(faqItem);
+            });
+            faqContainer.addEventListener('click', e => {
+                const button = e.target.closest('button');
+                if (!button) return;
+                button.nextElementSibling.classList.toggle('hidden');
+                button.querySelector('svg').classList.toggle('rotate-180');
+            });
+
+            // --- 카드사 링크 ---
+            const cardLinksContainer = document.getElementById('card-links-container');
+            cardData.forEach(card => {
+                const link = document.createElement('a');
+                link.href = card.url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.className = 'flex items-center justify-center p-4 bg-gray-100 rounded-lg font-semibold text-gray-800 hover:bg-blue-100 hover:text-blue-700 transition-colors text-center shadow';
+                link.textContent = card.name;
+                cardLinksContainer.appendChild(link);
+            });
+
+            // --- 초기화 ---
+            createOrUpdateChart('general');
+        });
+    </script>
+</body>
+</html>
