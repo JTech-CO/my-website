@@ -21,6 +21,35 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* EEG 오버레이 */
+        #easter-egg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out;
+            text-align: center;
+        }
+        /* 펄스 */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pulse-animation {
+            animation: pulse 0.5s ease-in-out 1;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-gray-800">
@@ -127,6 +156,11 @@
     </footer>
     </div>
 
+    <!-- 이스터에그 오버레이 -->
+    <div id="easter-egg-overlay">
+        이스터에그를 찾으셨습니다!
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // --- 데이터 ---
@@ -220,7 +254,7 @@
                 button.querySelector('svg').classList.toggle('rotate-180');
             });
 
-            // --- 카드사 링크 ---
+            // --- 카드사 ---
             const cardLinksContainer = document.getElementById('card-links-container');
             cardData.forEach(card => {
                 const link = document.createElement('a');
@@ -230,6 +264,35 @@
                 link.className = 'flex items-center justify-center p-4 bg-gray-100 rounded-lg font-semibold text-gray-800 hover:bg-blue-100 hover:text-blue-700 transition-colors text-center shadow';
                 link.textContent = card.name;
                 cardLinksContainer.appendChild(link);
+            });
+
+            // --- EEG ---
+            let konamiCode = '';
+            const targetCode = 'SEKHAR';
+            const easterEggOverlay = document.getElementById('easter-egg-overlay');
+
+            document.addEventListener('keydown', (e) => {
+                const pressedKey = e.key.toUpperCase();
+                if (pressedKey.length === 1 && pressedKey >= 'A' && pressedKey <= 'Z') {
+                    konamiCode += pressedKey;
+                } else if (e.code === 'Space' && konamiCode === targetCode) {
+                }
+                if (konamiCode.length > targetCode.length) {
+                    konamiCode = konamiCode.slice(-targetCode.length);
+                }
+                if (konamiCode === targetCode) {
+                    konamiCode = '';
+
+                    easterEggOverlay.style.visibility = 'visible';
+                    easterEggOverlay.style.opacity = '1';
+
+                    // 1회 펄스
+                    easterEggOverlay.classList.add('pulse-animation');
+                    easterEggOverlay.addEventListener('animationend', () => {
+                        easterEggOverlay.classList.remove('pulse-animation');
+                        window.location.href = 'https://x.com/D_Sekhar_14';
+                    }, { once: true }); // 애니메이션 단일 실행
+                }
             });
 
             // --- 초기화 ---
