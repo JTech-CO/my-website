@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상세페이지</title> <!--제작자: JTech_CO-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS */
+    :root {
+      --deep-blue: #0a4d94;
+      --accent-orange: #ff7a00;
+      --background-dark: #121212;
+      --text-light: #f0f0f0;
+      --code-bg: #1e1e1e;
+      --border-gray: #333;
+      --font-code: 'Roboto Mono', monospace;
+      --font-body: 'Noto Sans KR', sans-serif;
+    }
+
+    /* 전역 스타일 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: var(--font-body);
+      color: var(--text-light);
+      line-height: 1.8;
+      background: var(--background-dark);
+      scroll-behavior: smooth;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    a {
+      color: var(--accent-orange);
+      text-decoration: none;
+      transition: color 0.2s, transform 0.2s;
+    }
+    a:hover {
+      color: #ffd080;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: var(--accent-orange);
+      color: var(--background-dark);
+      padding: 16px 48px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      border-radius: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.4);
+      transition: all 0.3s ease;
+    }
+    .cta-btn:hover {
+      background: #e86b00;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.6);
+    }
+    h1, h2, h3 {
+      font-family: var(--font-code);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    h2 {
+      font-size: 2.2rem;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    h2::after {
+      content: "";
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: var(--accent-orange);
+      margin-top: 10px;
+    }
+    section {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border-gray);
+    }
+    .highlight {
+      color: var(--accent-orange);
+    }
+    strong, em {
+      color: var(--accent-orange);
+      font-weight: 700;
+    }
+    
+    #hero {
+      text-align: center;
+      padding: 120px 24px;
+      background: linear-gradient(rgba(10, 77, 148, 0.9), rgba(10, 77, 148, 0.9)),
+                  url("https://i.imgur.com/swURAKl.jpeg") no-repeat center center/cover;
+    }
+    #hero h1 {
+      font-size: 3.5rem;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    }
+    #hero p {
+      font-size: 1.4rem;
+      opacity: 0.9;
+      margin-bottom: 40px;
+    }
+    .nowrap-line {
+      white-space: nowrap;
+    }
+    
+    /* 대상 독자 */
+    .audience-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+    @media (min-width: 900px) {
+      .audience-list {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .audience-item {
+      background: var(--code-bg);
+      padding: 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border-gray);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .audience-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    .audience-item::before {
+      content: '>>';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-family: var(--font-code);
+      color: var(--accent-orange);
+      opacity: 0.7;
+    }
+    .audience-item p {
+      padding-left: 28px;
+    }
+    
+    /* 책 소개 */
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .feature {
+      background: var(--code-bg);
+      border-radius: 10px;
+      padding: 24px 32px;
+      border: 1px solid var(--border-gray);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .feature h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      color: var(--accent-orange);
+    }
+    .feature p {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+    
+    /* 저자 노트 */
+    .author-note {
+      background: var(--code-bg);
+      border-left: 4px solid var(--accent-orange);
+      padding: 32px;
+      margin-top: 40px;
+      border-radius: 4px;
+      font-family: var(--font-body);
+      position: relative;
+      overflow: hidden;
+    }
+    .author-note p {
+      margin-bottom: 16px;
+    }
+    .author-note h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      font-size: 1.5rem;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+    .author-note p:last-child {
+      margin-bottom: 0;
+    }
+    
+    /* CTA */
+    #buy-now {
+      text-align: center;
+      background: linear-gradient(rgba(20, 20, 20, 0.8), rgba(20, 20, 20, 0.8)),
+                  url("https://i.imgur.com/swURAKl.jpeg") no-repeat center center/cover;
+    }
+    #buy-now h2 {
+      margin-bottom: 40px;
+    }
+    #buy-now p {
+      margin-top: 20px;
+      opacity: 0.7;
+    }
+    
+    /* 푸터 */
+    footer {
+      text-align: center;
+      padding: 30px;
+      font-size: 0.8rem;
+      color: #888;
+      background: var(--code-bg);
+    }
+    
+    /* 터미널 */
+    .animated-terminal {
+      width: 100%;
+      height: 300px;
+      background: var(--code-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-gray);
+      margin-top: 40px;
+      padding: 20px;
+      overflow: hidden;
+    }
+    .terminal-output {
+      font-family: var(--font-code);
+      font-size: 1rem;
+      color: #00ff00;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CTA 버튼 -->
+  <header id="hero">
+    <div class="container">
+      <h1>
+        <span class="highlight">처음 배우는 MATLAB</span>
+        <br>
+        <span class="nowrap-line">비전공자를 위한 실습 입문 가이드</span>
+      </h1>
+      <p>설치부터 시험 대비까지 <span class="highlight">한 권으로 완주</span>하는 가장 현실적인 해답</p>
+      <a href="#buy-now" class="cta-btn">지금 바로 다운로드</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 대상 독자 -->
+    <section>
+      <h2>Target Audience</h2>
+      <div class="audience-list">
+        <div class="audience-item">
+          <p>필수 수치해석·프로그래밍 과목을 들어야 하는 <strong>비전공 대학생</strong></p>
+        </div>
+        <div class="audience-item">
+          <p><strong>전과·복수전공</strong>으로 갑자기 MATLAB 과제를 맡은 초보자</p>
+        </div>
+        <div class="audience-item">
+          <p>졸업 프로젝트에서 <strong>데이터 계산·그래프</strong>를 직접 처리해야 하는 팀원</p>
+        </div>
+        <div class="audience-item">
+          <p>MATLAB으로 논문 데이터를 분석해야 하는 <strong>대학원생</strong></p>
+        </div>
+        <div class="audience-item">
+          <p>공학 기초 강의를 진행하며 실습 자료가 필요한 <strong>튜터·조교</strong></p>
+        </div>
+        <div class="audience-item">
+          <p>산업 현장에서 MATLAB을 접했지만 <strong>기초가 부족한 실무자</strong></p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 책 소개 -->
+    <section>
+      <h2>Why This Book?</h2>
+      <div class="feature-list">
+        <div class="feature">
+          <h3>초보자 맞춤 흐름</h3>
+          <p>변수·배열·그래프를 <strong>따라 치면 바로 결과가 보이는</strong> 단계별 실습 구성</p>
+        </div>
+        <div class="feature">
+          <h3>수업·시험 직결 예제</h3>
+          <p>실제 기말고사 <strong>유형별 문제와 풀이 과정</strong>을 담은 커리큘럼</p>
+        </div>
+        <div class="feature">
+          <h3>바로 실행 가능한 .m 스크립트</h3>
+          <p>실행 가능한 소스 코드 포함 → 오타 걱정 없이 <strong>즉시 실행·응용</strong> 가능</p>
+        </div>
+        <div class="feature">
+          <h3>정리된 부록과 치트시트</h3>
+          <p>주요 함수·단축키를 부록에 압축, <strong>한눈에 확인 가능한</strong> 치트시트 표</p>
+        </div>
+        <div class="feature">
+          <h3>수십 장의 스크린샷</h3>
+          <p>"왜 안 돌아가지?" 순간을 빠르게 해결하는 <strong>오류 가이드</strong> 포함</p>
+        </div>
+      </div>
+      
+      <!-- 터미널 애니메이션 -->
+      <div class="animated-terminal">
+        <pre class="terminal-output"></pre>
+      </div>
+    </section>
+
+    <!-- 저자 노트 -->
+    <section>
+      <h2>Author's Note</h2>
+      <div class="author-note">
+        <p>
+          "대학에서 MATLAB을 처음 접하며 친절한 자료가 적어 많은 시간을 검색창과 씨름했습니다.  
+          같은 어려움을 겪는 사람들이 <strong>시간을 낭비하지 않도록</strong> 고민하며,  
+          강의·과제 현장에서 바로 써먹을 실습 예제와 오류 해결 노트를 한 권에 담았습니다."
+        </p>
+        <hr style="border: 1px solid var(--border-gray); margin: 24px 0;">
+        <h3>JTech Media</h3>
+        <p>
+          "쉽지만 깊이 있게"라는 원칙 아래 기술·디자인·개발 지식을 연결하는 1인 콘텐츠 스튜디오입니다. 전자책과 실물서, 3D 모델링, 실무용 템플릿까지 아이디어가 가치로 이어지는 전 과정을 기록하고 공유하며, 자동화 도구가 대신할 수 없는 이해·응용·창의의 힘을 확산시키기 위해, 실무현장에 바로 도움이 되는 자료를 만들고 있습니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="buy-now">
+      <h2>Get Started Now!</h2>
+      <a href="https://jtech-co.github.io/my-website/Sales%20Platform.html" class="cta-btn">
+        할인가로 구매하고 PDF 받아보기
+      </a>
+      <p>모든 구매자에게 실행 코드 &amp; 치트시트 부록 제공</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      © 2025 JTech Crop. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener('selectstart', function(e) {
+      e.preventDefault();
+    });
+    
+    document.addEventListener('copy', function(e) {
+      e.preventDefault();
+    });
+
+    // 스크롤 이벤트 애니메이션
+    document.addEventListener("DOMContentLoaded", function() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = 1;
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('section, .feature, .audience-item').forEach(el => {
+        el.style.opacity = 0;
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+        observer.observe(el);
+      });
+    });
+
+    // 터미널 타이핑
+    const terminalOutput = document.querySelector('.terminal-output');
+    const terminalText = [
+      '>> Welcome to MATLAB',
+      '>> Creating your first vector...',
+      '>> data = [1, 2, 3, 4, 5];',
+      '>> plot(data);',
+      '>> figure;',
+      '>> title(\'My First Plot\');',
+      '>> xlabel(\'X-axis\');',
+      '>> ylabel(\'Y-axis\');',
+      '>> disp(\'Success! The plot has been generated.\');'
+    ];
+    let lineIndex = 0;
+    let charIndex = 0;
+    let isTyping = true;
+
+    function typeLine() {
+      if (!isTyping) return;
+      if (lineIndex < terminalText.length) {
+        if (charIndex < terminalText[lineIndex].length) {
+          terminalOutput.textContent += terminalText[lineIndex].charAt(charIndex);
+          charIndex++;
+          setTimeout(typeLine, 50);
+        } else {
+          terminalOutput.textContent += '\n';
+          lineIndex++;
+          charIndex = 0;
+          setTimeout(typeLine, 1000);
+        }
+      } else {
+        isTyping = false;
+      }
+    }
+    
+    // 터미널 Intersection Observer
+    const terminalObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !isTyping) {
+          terminalOutput.textContent = '';
+          lineIndex = 0;
+          charIndex = 0;
+          isTyping = true;
+          typeLine();
+        } else if (!entry.isIntersecting) {
+          isTyping = false;
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    const animatedTerminal = document.querySelector('.animated-terminal');
+    terminalObserver.observe(animatedTerminal);
+
+  </script>
+</body>
+</html>
