@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영문 난수 생성기</title> <!--제작자: JTech_CO-->
+    <!-- 구글 폰트  -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f9;
+        }
+        /* 슬라이더 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4285f4;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: background 0.3s ease;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #4285f4;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: background 0.3s ease;
+        }
+        input[type="range"]:hover::-webkit-slider-thumb {
+            background: #1a73e8;
+        }
+        input[type="range"]:hover::-moz-range-thumb {
+            background: #1a73e8;
+        }
+        /* 메시지 박스 */
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: #ddebff;
+            color: #000000;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+            z-index: 1000;
+        }
+        .message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4 sm:p-6">
+    <div class="max-w-4xl w-full bg-white rounded-2xl shadow-xl p-8 sm:p-10 text-center">
+        <!-- 타이틀 -->
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-6 sm:mb-8">
+            영문 난수 생성기
+        </h1>
+        
+        <!-- 설명 -->
+        <p class="text-gray-500 mb-8 sm:mb-10 text-sm sm:text-base">
+            슬라이더로 난수의 길이, 생성 개수, 포함될 문자 종류를 설정하세요.<br>
+            생성된 영문 난수를 클릭하면 클립보드에 복사됩니다.
+        </p>
+
+        <!-- 컨트롤 -->
+        <div class="space-y-6 sm:space-y-8 text-left">
+            <!-- 난수 길이 -->
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label for="string-length" class="text-gray-700 font-medium text-lg sm:text-xl">
+                        난수 길이 (5 ~ 64)
+                    </label>
+                    <span id="string-length-value" class="text-gray-600 font-bold text-lg sm:text-xl px-2 py-1 bg-gray-100 rounded-md">
+                        24
+                    </span>
+                </div>
+                <input type="range" id="string-length" min="5" max="64" value="24" class="w-full h-2 rounded-lg cursor-pointer">
+            </div>
+
+            <!-- 숫자 개수 -->
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label for="num-digits" class="text-gray-700 font-medium text-lg sm:text-xl">
+                        숫자 개수 (1 ~ 10)
+                    </label>
+                    <span id="num-digits-value" class="text-gray-600 font-bold text-lg sm:text-xl px-2 py-1 bg-gray-100 rounded-md">
+                        1
+                    </span>
+                </div>
+                <input type="range" id="num-digits" min="1" max="10" value="1" class="w-full h-2 rounded-lg cursor-pointer">
+            </div>
+
+            <!-- 특수문자 개수 -->
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label for="num-special" class="text-gray-700 font-medium text-lg sm:text-xl">
+                        특수문자 개수 (1 ~ 10)
+                    </label>
+                    <span id="num-special-value" class="text-gray-600 font-bold text-lg sm:text-xl px-2 py-1 bg-gray-100 rounded-md">
+                        1
+                    </span>
+                </div>
+                <input type="range" id="num-special" min="1" max="10" value="1" class="w-full h-2 rounded-lg cursor-pointer">
+            </div>
+
+            <!-- 생성 개수 -->
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label for="generation-count" class="text-gray-700 font-medium text-lg sm:text-xl">
+                        생성 개수 (1 ~ 10)
+                    </label>
+                    <span id="generation-count-value" class="text-gray-600 font-bold text-lg sm:text-xl px-2 py-1 bg-gray-100 rounded-md">
+                        1
+                    </span>
+                </div>
+                <input type="range" id="generation-count" min="1" max="10" value="1" class="w-full h-2 rounded-lg cursor-pointer">
+            </div>
+        </div>
+
+        <!-- 생성 -->
+        <button id="generate-btn" class="mt-8 w-full sm:w-auto px-8 py-4 bg-blue-600 text-white font-bold text-lg rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out">
+            난수 생성
+        </button>
+
+        <!-- 결과 출력 -->
+        <div class="mt-10 bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <h2 class="text-lg sm:text-xl font-semibold text-gray-700 mb-4">생성된 난수:</h2>
+            <div id="result-output" class="text-sm sm:text-base font-mono text-gray-800 break-all text-left space-y-2">
+                <div class="bg-gray-100 p-4 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors duration-200">
+                    여기에 난수가 표시됩니다.
+                </div>
+            </div>
+        </div>
+        <p class="text-center text-gray-400 text-sm mt-6">
+        <span class="block">© 2025 JTech CO. EN Random Number Generator. All rights reserved.</span>
+    </p>
+    </div>
+
+    
+    <div id="message-box" class="message-box"></div>
+
+    <script>
+        // DOM
+        const numDigitsSlider = document.getElementById('num-digits');
+        const numDigitsValue = document.getElementById('num-digits-value');
+        const numSpecialSlider = document.getElementById('num-special');
+        const numSpecialValue = document.getElementById('num-special-value');
+        const stringLengthSlider = document.getElementById('string-length');
+        const stringLengthValue = document.getElementById('string-length-value');
+        const generationCountSlider = document.getElementById('generation-count');
+        const generationCountValue = document.getElementById('generation-count-value');
+        const generateBtn = document.getElementById('generate-btn');
+        const resultOutput = document.getElementById('result-output');
+        const messageBox = document.getElementById('message-box');
+        
+        // 슬라이더 값 변경 업데이트
+        numDigitsSlider.addEventListener('input', () => {
+            numDigitsValue.textContent = numDigitsSlider.value;
+        });
+
+        numSpecialSlider.addEventListener('input', () => {
+            numSpecialValue.textContent = numSpecialSlider.value;
+        });
+        
+        stringLengthSlider.addEventListener('input', () => {
+            stringLengthValue.textContent = stringLengthSlider.value;
+        });
+        
+        generationCountSlider.addEventListener('input', () => {
+            generationCountValue.textContent = generationCountSlider.value;
+        });
+        
+        // 메시지 표시
+        function showMessage(message) {
+            messageBox.textContent = message;
+            messageBox.classList.add('show');
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000);
+        }
+
+        // 난수 함수
+        function generateRandomString(length, numDigits, numSpecial) {
+            const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const digits = '0123456789';
+            const specialChars = '!@#$%^&*';
+            
+            let randomStringArray = [];
+
+            // 필수 문자 추가
+            for (let i = 0; i < numDigits; i++) {
+                randomStringArray.push(digits[Math.floor(Math.random() * digits.length)]);
+            }
+            for (let i = 0; i < numSpecial; i++) {
+                randomStringArray.push(specialChars[Math.floor(Math.random() * specialChars.length)]);
+            }
+
+            // 나머지 길이만큼 영문자
+            const numLetters = length - numDigits - numSpecial;
+            for (let i = 0; i < numLetters; i++) {
+                randomStringArray.push(letters[Math.floor(Math.random() * letters.length)]);
+            }
+
+            // 배열 무작위 (피셔-예이츠 셔플)
+            for (let i = randomStringArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [randomStringArray[i], randomStringArray[j]] = [randomStringArray[j], randomStringArray[i]];
+            }
+
+            return randomStringArray.join('');
+        }
+
+        // 난수 생성
+        generateBtn.addEventListener('click', () => {
+            const totalLength = parseInt(stringLengthSlider.value);
+            const numDigits = parseInt(numDigitsSlider.value);
+            const numSpecial = parseInt(numSpecialSlider.value);
+            const generationCount = parseInt(generationCountSlider.value);
+
+            // 유효성 검사
+            if (numDigits + numSpecial > totalLength) {
+                showMessage(`숫자와 특수문자의 합이 난수 길이(${totalLength})를 초과합니다.`);
+                return;
+            }
+
+            let results = [];
+            for(let i = 0; i < generationCount; i++) {
+                results.push(generateRandomString(totalLength, numDigits, numSpecial));
+            }
+            
+            resultOutput.innerHTML = '';
+
+            // 생성된 난수 블록
+            results.forEach(str => {
+                const resultBlock = document.createElement('div');
+                resultBlock.className = 'bg-gray-100 p-4 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors duration-200';
+                resultBlock.textContent = str;
+                
+                resultBlock.addEventListener('click', () => {
+                    const tempInput = document.createElement('textarea');
+                    tempInput.value = str;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+                    showMessage('클립보드에 복사되었습니다!');
+                });
+
+                resultOutput.appendChild(resultBlock);
+            });
+        });
+
+    </script>
+</body>
+</html>
