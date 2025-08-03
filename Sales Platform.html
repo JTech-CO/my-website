@@ -134,9 +134,15 @@
                     <p id="detailProductAuthor" class="text-lg text-gray-400 mb-3"></p>
                     <p id="detailProductDescription" class="text-base text-gray-300 leading-relaxed mb-4 max-h-40 overflow-y-auto pr-2"></p>
                     <p id="detailProductPrice" class="text-2xl font-extrabold text-yellow-400 mb-6"></p>
-                    <button id="purchaseButton" class="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-full shadow-lg hover:from-purple-700 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-500/75">
-                        구매하기
-                    </button>
+                    <!-- MODIFIED: Button container -->
+                    <div class="flex flex-col sm:flex-row gap-4 w-full justify-center sm:justify-start">
+                        <button id="purchaseButton" class="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-full shadow-lg hover:from-purple-700 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-500/75">
+                            구매하기
+                        </button>
+                        <button id="learnMoreButton" class="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-full shadow-lg hover:from-purple-700 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-500/75">
+                            더 알아보기
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -479,7 +485,21 @@
                 this.alt = 'Placeholder Image for ' + product.name;
             };
 
-            document.getElementById('purchaseButton').onclick = openPurchaseWarningModal;
+            // MODIFIED: Button handlers
+            const purchaseButton = document.getElementById('purchaseButton');
+            const learnMoreButton = document.getElementById('learnMoreButton');
+
+            purchaseButton.onclick = openPurchaseWarningModal;
+
+            // '더 알아보기' 버튼 설정
+            if (product.id === 'eb1') {
+                learnMoreButton.onclick = () => {
+                    window.open('https://jtech-co.github.io/my-website/Detail%20Page%20ML1.html', '_blank');
+                };
+            } else {
+                // 다른 상품들은 클릭은 되지만 아무 동작도 하지 않음
+                learnMoreButton.onclick = () => {};
+            }
 
             modal.classList.remove('hidden');
             modalContent.classList.remove('modal-exit-active');
