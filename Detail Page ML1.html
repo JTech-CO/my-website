@@ -156,6 +156,72 @@
     .audience-item p {
       padding-left: 28px;
     }
+
+    /* --- 미리보기 섹션 --- */
+    #preview {
+        overflow: hidden;
+        padding: 80px 0;
+        position: relative;
+    }
+    .preview-container {
+        width: 100%;
+        overflow-x: scroll;
+        position: relative;
+        margin-top: 40px;
+        -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        cursor: grab;
+        scrollbar-width: none;
+    }
+    .preview-container::-webkit-scrollbar {
+        display: none;
+    }
+    .preview-container.active {
+        cursor: grabbing;
+        cursor: -webkit-grabbing;
+    }
+    .preview-track {
+        display: flex;
+    }
+    .preview-item {
+        flex-shrink: 0;
+        width: 230px;
+        margin: 0 10px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .preview-container:hover .preview-item {
+        box-shadow: 0 8px 25px rgba(255, 122, 0, 0.4);
+    }
+    .preview-container.active .preview-item {
+        transform: scale(1.02);
+    }
+
+    /* 이미지 확대 */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+    }
+    .modal-content {
+        max-width: 90vw;
+        max-height: 90vh;
+        border-radius: 10px;
+        box-shadow: 0 0 40px rgba(255, 122, 0, 0.5);
+    }
+    .modal-overlay.show {
+        display: flex;
+    }
+    /* --- 미리보기 섹션 스타일 끝 --- */
     
     /* 책 소개 */
     .feature-list {
@@ -266,9 +332,9 @@
     </div>
   </header>
 
-  <main class="container">
+  <main>
     <!-- 대상 독자 -->
-    <section>
+    <section class="container">
       <h2>Target Audience</h2>
       <div class="audience-list">
         <div class="audience-item">
@@ -291,64 +357,79 @@
         </div>
       </div>
     </section>
+
+    <!-- --- 미리보기 섹션 시작 --- -->
+    <section id="preview">
+        <div class="container">
+            <h2>Preview</h2>
+        </div>
+        <div class="preview-container">
+            <div class="preview-track">
+                <!-- JS로 이미지 동적 추가 -->
+            </div>
+        </div>
+    </section>
+    <!-- --- 미리보기 섹션 끝 --- -->
     
-    <!-- 책 소개 -->
-    <section>
-      <h2>Why This Book?</h2>
-      <div class="feature-list">
-        <div class="feature">
-          <h3>초보자 맞춤 흐름</h3>
-          <p>변수·배열·그래프를 <strong>따라 치면 바로 결과가 보이는</strong> 단계별 실습 구성</p>
-        </div>
-        <div class="feature">
-          <h3>수업·시험 직결 예제</h3>
-          <p>실제 기말고사 <strong>유형별 문제와 풀이 과정</strong>을 담은 커리큘럼</p>
-        </div>
-        <div class="feature">
-          <h3>바로 실행 가능한 .m 스크립트</h3>
-          <p>실행 가능한 소스 코드 포함 → 오타 걱정 없이 <strong>즉시 실행·응용</strong> 가능</p>
-        </div>
-        <div class="feature">
-          <h3>정리된 부록과 치트시트</h3>
-          <p>주요 함수·단축키를 부록에 압축, <strong>한눈에 확인 가능한</strong> 치트시트 표</p>
-        </div>
-        <div class="feature">
-          <h3>수십 장의 스크린샷</h3>
-          <p>"왜 안 돌아가지?" 순간을 빠르게 해결하는 <strong>오류 가이드</strong> 포함</p>
-        </div>
-      </div>
-      
-      <!-- 터미널 애니메이션 -->
-      <div class="animated-terminal">
-        <pre class="terminal-output"></pre>
-      </div>
-    </section>
+    <div class="container">
+        <!-- 책 소개 -->
+        <section>
+          <h2>Why This Book?</h2>
+          <div class="feature-list">
+            <div class="feature">
+              <h3>초보자 맞춤 흐름</h3>
+              <p>변수·배열·그래프를 <strong>따라 치면 바로 결과가 보이는</strong> 단계별 실습 구성</p>
+            </div>
+            <div class="feature">
+              <h3>수업·시험 직결 예제</h3>
+              <p>실제 기말고사 <strong>유형별 문제와 풀이 과정</strong>을 담은 커리큘럼</p>
+            </div>
+            <div class="feature">
+              <h3>바로 실행 가능한 .m 스크립트</h3>
+              <p>실행 가능한 소스 코드 포함 → 오타 걱정 없이 <strong>즉시 실행·응용</strong> 가능</p>
+            </div>
+            <div class="feature">
+              <h3>정리된 부록과 치트시트</h3>
+              <p>주요 함수·단축키를 부록에 압축, <strong>한눈에 확인 가능한</strong> 치트시트 표</p>
+            </div>
+            <div class="feature">
+              <h3>수십 장의 스크린샷</h3>
+              <p>"왜 안 돌아가지?" 순간을 빠르게 해결하는 <strong>오류 가이드</strong> 포함</p>
+            </div>
+          </div>
+          
+          <!-- 터미널 애니메이션 -->
+          <div class="animated-terminal">
+            <pre class="terminal-output"></pre>
+          </div>
+        </section>
 
-    <!-- 저자 노트 -->
-    <section>
-      <h2>Author's Note</h2>
-      <div class="author-note">
-        <p>
-          "대학에서 MATLAB을 처음 접하며 친절한 자료가 적어 많은 시간을 검색창과 씨름했습니다.  
-          같은 어려움을 겪는 사람들이 <strong>시간을 낭비하지 않도록</strong> 고민하며,  
-          강의·과제 현장에서 바로 써먹을 실습 예제와 오류 해결 노트를 한 권에 담았습니다."
-        </p>
-        <hr style="border: 1px solid var(--border-gray); margin: 24px 0;">
-        <h3>JTech Media</h3>
-        <p>
-          "쉽지만 깊이 있게"라는 원칙 아래 기술·디자인·개발 지식을 연결하는 1인 콘텐츠 스튜디오입니다. 전자책과 실물서, 3D 모델링, 실무용 템플릿까지 아이디어가 가치로 이어지는 전 과정을 기록하고 공유하며, 자동화 도구가 대신할 수 없는 이해·응용·창의의 힘을 확산시키기 위해, 실무현장에 바로 도움이 되는 자료를 만들고 있습니다.
-        </p>
-      </div>
-    </section>
+        <!-- 저자 노트 -->
+        <section>
+          <h2>Author's Note</h2>
+          <div class="author-note">
+            <p>
+              "대학에서 MATLAB을 처음 접하며 친절한 자료가 적어 많은 시간을 검색창과 씨름했습니다.  
+              같은 어려움을 겪는 사람들이 <strong>시간을 낭비하지 않도록</strong> 고민하며,  
+              강의·과제 현장에서 바로 써먹을 실습 예제와 오류 해결 노트를 한 권에 담았습니다."
+            </p>
+            <hr style="border: 1px solid var(--border-gray); margin: 24px 0;">
+            <h3>JTech Media</h3>
+            <p>
+              "쉽지만 깊이 있게"라는 원칙 아래 기술·디자인·개발 지식을 연결하는 1인 콘텐츠 스튜디오입니다. 전자책과 실물서, 3D 모델링, 실무용 템플릿까지 아이디어가 가치로 이어지는 전 과정을 기록하고 공유하며, 자동화 도구가 대신할 수 없는 이해·응용·창의의 힘을 확산시키기 위해, 실무현장에 바로 도움이 되는 자료를 만들고 있습니다.
+            </p>
+          </div>
+        </section>
 
-    <!-- CTA -->
-    <section id="buy-now">
-      <h2>Get Started Now!</h2>
-      <a href="https://jtech-co.github.io/my-website/Sales%20Platform.html" class="cta-btn">
-        할인가로 구매하고 PDF 받아보기
-      </a>
-      <p>모든 구매자에게 실행 코드 &amp; 치트시트 부록 제공</p>
-    </section>
+        <!-- CTA -->
+        <section id="buy-now">
+          <h2>Get Started Now!</h2>
+          <a href="https://jtech-co.github.io/my-website/Sales%20Platform.html" class="cta-btn">
+            할인가로 구매하고 PDF 받아보기
+          </a>
+          <p>모든 구매자에게 실행 코드 &amp; 치트시트 부록 제공</p>
+        </section>
+    </div>
   </main>
 
   <footer>
@@ -356,6 +437,11 @@
       © 2025 JTech Crop. All rights reserved.
     </div>
   </footer>
+
+  <!-- 이미지 확대 Modal -->
+  <div class="modal-overlay">
+    <img src="" alt="확대된 미리보기 이미지" class="modal-content">
+  </div>
 
   <script>
     document.addEventListener('contextmenu', function(e) {
@@ -440,8 +526,106 @@
     }, { threshold: 0.5 });
     
     const animatedTerminal = document.querySelector('.animated-terminal');
-    terminalObserver.observe(animatedTerminal);
+    if(animatedTerminal) {
+        terminalObserver.observe(animatedTerminal);
+    }
+    
+    // --- 미리보기 스크립트 ---
+    const slider = document.querySelector('.preview-container');
+    const track = document.querySelector('.preview-track');
+    const imageUrls = [
+        'https://i.imgur.com/f4CdC5i.jpeg', 'https://i.imgur.com/xpE0aeo.jpeg',
+        'https://i.imgur.com/Wo2l9x2.jpeg', 'https://i.imgur.com/YGOsab9.jpeg',
+        'https://i.imgur.com/0CkK5YN.jpeg', 'https://i.imgur.com/fnLOCt8.jpeg',
+        'https://i.imgur.com/Afm38oN.jpeg', 'https://i.imgur.com/0Rq8b1S.jpeg',
+        'https://i.imgur.com/J2AQl60.jpeg', 'https://i.imgur.com/QgQ1ADg.jpeg'
+    ];
 
+    // 무한 스크롤용 이미지루프 2회
+    const fullImageUrls = [...imageUrls, ...imageUrls];
+
+    fullImageUrls.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.classList.add('preview-item');
+        track.appendChild(img);
+    });
+
+    const itemWidth = 230 + 20;
+    track.style.width = `${itemWidth * fullImageUrls.length}px`;
+    const scrollWidth = itemWidth * imageUrls.length;
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    let isDragging = false;
+    let autoScrollInterval;
+
+    const startAutoScroll = () => {
+        if (autoScrollInterval) clearInterval(autoScrollInterval);
+        autoScrollInterval = setInterval(() => {
+            slider.scrollLeft += 1;
+            if (slider.scrollLeft >= scrollWidth) {
+                slider.scrollLeft = 0;
+            }
+        }, 25);
+    };
+
+    const stopAutoScroll = () => {
+        clearInterval(autoScrollInterval);
+    };
+
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        isDragging = false;
+        slider.classList.add('active');
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+        stopAutoScroll();
+        e.preventDefault();
+    });
+
+    slider.addEventListener('mouseleave', () => {
+        if (!isDown) {
+            startAutoScroll();
+        }
+        isDown = false;
+        slider.classList.remove('active');
+    });
+    
+    slider.addEventListener('mouseenter', stopAutoScroll);
+
+    slider.addEventListener('mouseup', (e) => {
+        isDown = false;
+        slider.classList.remove('active');
+        startAutoScroll();
+
+        if (!isDragging) {
+            if (e.target.classList.contains('preview-item')) {
+                const modalOverlay = document.querySelector('.modal-overlay');
+                const modalContent = document.querySelector('.modal-content');
+                modalContent.src = e.target.src;
+                modalOverlay.classList.add('show');
+            }
+        }
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        isDragging = true;
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2;
+        slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // Modal 닫기
+    const modalOverlay = document.querySelector('.modal-overlay');
+    modalOverlay.addEventListener('click', () => {
+        modalOverlay.classList.remove('show');
+    });
+
+    // 페이지 로드 시 자동 스크롤
+    startAutoScroll();
   </script>
 </body>
 </html>
