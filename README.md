@@ -17,3 +17,4 @@ https://jtech-co.github.io/my-website/(프로그램 제목)%20(공백).html
 * **Ultimate Image Converter**: 업로드한 사진 파일의 확장자를 바꿔서 다운로드합니다. 대부분의 이미지 확장자를 지원합니다.
 * **Sales Platform**: JTech 공식 판매 플랫폼입니다. Media + Product + Dev 모두 다룹니다.
 * **Detail Page ML1**: 「처음 배우는 MATLAB - 비전공자를 위한 실습 입문 가이드」 전용 상세페이지입니다.
+* **Random Number Generator**: 숫자와 특수문자 개수, 난수의 길이를 조절할 수 있는 영문 난수 생성기입니다.
