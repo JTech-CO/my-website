@@ -18,3 +18,5 @@ https://jtech-co.github.io/my-website/(프로그램 제목)%20(공백).html
 * **Sales Platform**: JTech 공식 판매 플랫폼입니다. Media + Product + Dev 모두 다룹니다.
 * **Detail Page ML1**: 「처음 배우는 MATLAB - 비전공자를 위한 실습 입문 가이드」 전용 상세페이지입니다.
 * **Random Number Generator**: 숫자와 특수문자 개수, 난수의 길이를 조절할 수 있는 영문 난수 생성기입니다.
+* **광복절**: 2025년 8월 15일, 광복 80주년 기념 간단히 만든 태극기 휘날리고 있는 사이트입니다.
+* 
