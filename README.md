@@ -21,4 +21,5 @@ https://jtech-co.github.io/my-website/(프로그램 제목)%20(공백).html
 * **광복절**: 2025년 8월 15일, 광복 80주년 기념 간단히 만든 태극기 휘날리고 있는 사이트
 * **Gemini 구독 등급 비교**: 블로그 부연설명 용도로 만든 Google Gemini 구독 등급 비교표 
 * **Discharged Military Timer**: 누군가의 전역일 계산기
-* 
+* **End of 2025 Timer**: 2025년이 끝나간다
+* *
