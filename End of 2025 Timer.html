@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>End of 2025 Timer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Roboto Mono', 'Noto Sans KR', monospace, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        #container {
+            padding: 20px;
+            position: relative;
+            z-index: 3;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        #debug-indicator {
+            color: #ff0000;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #ff0000;
+        }
+
+        #title {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff00c1, #00fff2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        #timer {
+            font-size: clamp(1.5rem, 6vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        #details p {
+            margin: 10px 0;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            font-weight: 300;
+            color: #cccccc;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+    <div id="container">
+        <div id="debug-indicator" style="display: none;">Debug Mode</div>
+        <h1 id="title">End of 2025 Timer</h1>
+        <div id="timer"></div>
+        <div id="details">
+            <p id="days-decimal"></p>
+            <p id="hours-decimal"></p>
+            <p id="minutes-decimal"></p>
+            <p id="seconds-total"></p>
+        </div>
+    </div>
+
+    <script>
+        const timerEl = document.getElementById('timer');
+        const daysDecimalEl = document.getElementById('days-decimal');
+        const hoursDecimalEl = document.getElementById('hours-decimal');
+        const minutesDecimalEl = document.getElementById('minutes-decimal');
+        const secondsTotalEl = document.getElementById('seconds-total');
+        const titleEl = document.getElementById('title');
+        const debugIndicatorEl = document.getElementById('debug-indicator');
+
+        const dDay = new Date('2026-01-01T00:00:00+09:00').getTime();
+
+        let isFireworksActive = false;
+        let timerInterval;
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            let diff = dDay - now;
+
+            if (diff <= 0) {
+                timerEl.textContent = "00일 00시간 00분 00초 000밀리초";
+                daysDecimalEl.textContent = "0.0000000000일";
+                hoursDecimalEl.textContent = "0.00000시간";
+                minutesDecimalEl.textContent = "0.000분";
+                secondsTotalEl.textContent = "0초";
+                titleEl.textContent = "Welcome 2026";
+                if (!isFireworksActive) {
+                    isFireworksActive = true;
+                    for(let i=0; i<20; i++) {
+                        setTimeout(createFirework, i * 150);
+                    }
+                }
+                clearInterval(timerInterval);
+                timerInterval = null;
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            const milliseconds = diff % 1000;
+            
+            timerEl.textContent = 
+                `${String(days).padStart(2, '0')}일 ` +
+                `${String(hours).padStart(2, '0')}시간 ` +
+                `${String(minutes).padStart(2, '0')}분 ` +
+                `${String(seconds).padStart(2, '0')}초 ` +
+                `${String(milliseconds).padStart(3, '0')}밀리초`;
+
+            const totalDays = diff / (1000 * 60 * 60 * 24);
+            daysDecimalEl.textContent = `${totalDays.toFixed(10)}일`;
+            hoursDecimalEl.textContent = `${(diff / (1000 * 60 * 60)).toFixed(5)}시간`;
+            minutesDecimalEl.textContent = `${(diff / (1000 * 60)).toFixed(3)}분`;
+            secondsTotalEl.textContent = `${Math.floor(diff / 1000).toLocaleString()}초`;
+
+            if (totalDays < 1 && !isFireworksActive) {
+                isFireworksActive = true;
+                setInterval(createFirework, 400); // 0.4초마다 불꽃 생성
+            }
+        }
+
+        // --- 디버그 모드 ---
+        let debugMode = false;
+        let keySequence = '';
+        const secretCode = 'elqjrm';
+        let tempFireworksInterval;
+
+        window.addEventListener('keydown', (e) => {
+            if (!debugMode) {
+                keySequence = (keySequence + e.key).slice(-secretCode.length);
+                if (keySequence === secretCode) {
+                    debugMode = true;
+                    debugIndicatorEl.style.display = 'block';
+                    console.log('Debug mode activated.');
+                }
+                return;
+            }
+
+            switch(e.key) {
+                case 'q':
+                    console.log('Debug: Triggering Fireworks Effect');
+                    if (tempFireworksInterval) clearInterval(tempFireworksInterval);
+                    tempFireworksInterval = setInterval(createFirework, 400);
+                    setTimeout(() => {
+                        clearInterval(tempFireworksInterval);
+                        console.log('Debug: Stopping Fireworks Effect');
+                    }, 60000);
+                    break;
+                case 'w':
+                    console.log('Debug: Triggering D-Day State');
+                    if (!timerInterval) return;
+                    
+                    const originalTitle = titleEl.textContent;
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+
+                    titleEl.textContent = 'Welcome 2026';
+                    timerEl.textContent = "00일 00시간 00분 00초 000밀리초";
+                    
+                    setTimeout(() => {
+                        console.log('Debug: Reverting D-Day State');
+                        titleEl.textContent = originalTitle;
+                        if (!timerInterval && dDay - new Date().getTime() > 0) {
+                           startTimer();
+                        }
+                    }, 10000);
+                    break;
+            }
+        });
+
+        // --- 불꽃놀이 이펙트 ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let fireworks = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 2.5 + 1.5;
+                this.speedX = Math.random() * 8 - 4;
+                this.speedY = Math.random() * 8 - 4;
+                this.color = color;
+                this.gravity = 0.1;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.015;
+            }
+            update() {
+                this.speedY += this.gravity;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.alpha -= this.decay;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class Firework {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height;
+                this.targetY = Math.random() * (canvas.height / 2.5);
+                this.speed = 3 + Math.random() * 4;
+                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                this.size = 3;
+            }
+            update() {
+                this.y -= this.speed;
+                if (this.y < this.targetY) {
+                    for(let i=0; i<120; i++) {
+                        particles.push(new Particle(this.x, this.y, this.color));
+                    }
+                    this.exploded = true;
+                }
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function createFirework() {
+            fireworks.push(new Firework());
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                fireworks[i].update();
+                fireworks[i].draw();
+                if (fireworks[i].exploded) fireworks.splice(i, 1);
+            }
+            
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].alpha <= 0) particles.splice(i, 1);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1);
+            updateTimer();
+        }
+
+        resizeCanvas();
+        startTimer();
+        animate();
+    </script>
+</body>
+</html>
