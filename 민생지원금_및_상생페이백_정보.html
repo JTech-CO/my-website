@@ -26,6 +26,14 @@
             color: #3b82f6;
             background-color: #eff6ff;
         }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-gray-800">
@@ -47,6 +55,7 @@
             </nav>
         </div>
 
+        <!-- 탭 -->
         <main>
             <!-- 2차 민생회복 지원금 -->
             <div id="content-support" class="content-fade">
@@ -82,7 +91,62 @@
                         <p class="mt-2">* 추가 지원은 중복 적용되지 않으며, 더 유리한 조건 하나만 적용됩니다.</p>
                     </div>
                 </section>
-        
+                
+                <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
+                    <h2 class="text-2xl font-bold mb-4 text-blue-600">🔍 2차 지원금 대상자격 자가진단</h2>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                        <h3 class="font-semibold text-gray-800 mb-2">건강보험료 확인 방법</h3>
+                        <p class="text-gray-600 text-sm mb-4">정확한 자가진단을 위해 2025년 6월분 건강보험료를 확인해야 합니다. 아래 버튼을 통해 국민건강보험공단 홈페이지에서 간편하게 조회할 수 있습니다.</p>
+                        <a href="https://www.nhis.or.kr" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-blue-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-600 transition-colors text-sm shadow">
+                            건강보험공단 홈페이지 바로가기
+                        </a>
+                    </div>
+
+                    <div id="calculator">
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="household-size" class="block text-sm font-medium text-gray-700">가구원 수</label>
+                                <select id="household-size" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                    <option value="1">1인</option>
+                                    <option value="2">2인</option>
+                                    <option value="3">3인</option>
+                                    <option value="4" selected>4인</option>
+                                    <option value="5">5인</option>
+                                    <option value="6">6인</option>
+                                    <option value="7">7인</option>
+                                    <option value="8">8인</option>
+                                    <option value="9">9인</option>
+                                    <option value="10">10인 이상</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="insurance-type" class="block text-sm font-medium text-gray-700">가입 유형</label>
+                                <select id="insurance-type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                    <option value="직장">직장가입자</option>
+                                    <option value="지역">지역가입자</option>
+                                    <option value="혼합">혼합 (직장+지역)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                             <label for="health-insurance-fee" class="block text-sm font-medium text-gray-700">가구 총 월 건강보험료 (원)</label>
+                             <input type="number" id="health-insurance-fee" placeholder="숫자만 입력 (예: 350000)" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                        <div class="mb-4">
+                             <label for="property-tax-base" class="block text-sm font-medium text-gray-700">가구 총 재산세 과세표준 (원)</label>
+                             <input type="number" id="property-tax-base" placeholder="고액자산가 확인용 (선택)" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                         <div class="mb-6">
+                             <label for="financial-income" class="block text-sm font-medium text-gray-700">가구 총 금융소득 (원)</label>
+                             <input type="number" id="financial-income" placeholder="고액자산가 확인용 (선택)" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                        <button id="calculate-btn" class="w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors shadow-lg">
+                            지원 대상 여부 확인하기
+                        </button>
+                    </div>
+                    <div id="calculator-result" class="mt-6 p-4 rounded-lg hidden"></div>
+                </section>
+
                 <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
                     <h2 class="text-2xl font-bold mb-4 text-blue-600">🗓️ 신청 및 사용 기간</h2>
                     <div class="space-y-4">
@@ -90,6 +154,11 @@
                         <div class="bg-gray-100 p-4 rounded-lg"><h3 class="font-semibold text-lg text-gray-800">2️⃣ 2차 지급</h3><p class="text-gray-600"><strong class="font-medium">신청 기간:</strong> 2025년 9월 22일 (월) ~ 10월 31일 (금)</p></div>
                         <div class="bg-red-100 border-l-4 border-red-500 p-4 rounded-lg"><h3 class="font-semibold text-lg text-red-800">❗️ 사용 마감</h3><p class="text-red-700"><strong class="font-medium">공통 사용 기한:</strong> 2025년 11월 30일 (일) 까지</p><p class="text-red-700 text-sm mt-1">* 기간 내 사용하지 않은 잔액은 소멸됩니다.</p></div>
                     </div>
+                </section>
+
+                <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
+                    <h2 class="text-2xl font-bold mb-4 text-blue-600">❓ 자주 묻는 질문 (FAQ)</h2>
+                    <div class="space-y-3" id="faq-support-container"></div>
                 </section>
 
                 <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
@@ -107,7 +176,7 @@
                 <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
                     <h2 class="text-2xl font-bold mb-4 text-green-600">🛍️ 상생페이백이란?</h2>
                     <p class="text-gray-700 leading-relaxed">
-                        작년보다 카드를 더 많이 쓰면, 늘어난 소비액의 일부를 돌려주는 소비 환급 제도입니다. 소비를 촉진하고 소상공인을 지원하기 위한 민생회복 지원사업의 일환으로, 민생회복 지원금과 **별도로 신청하고 혜택**을 받을 수 있습니다.
+                        작년보다 카드를 더 많이 쓰면, 늘어난 소비액의 일부를 돌려주는 소비 환급 제도입니다. 소비를 촉진하고 소상공인을 지원하기 위한 민생회복 지원사업의 일환으로, 민생회복 지원금과는 별도입니다.
                     </p>
                 </section>
 
@@ -171,7 +240,7 @@
                 </section>
             </div>
 
-            <!-- 공통 -->
+            <!-- 공통 섹션 -->
              <section class="bg-white p-6 rounded-2xl shadow-md mb-8">
                 <h2 class="text-2xl font-bold mb-4 text-blue-600">📍 지역별 상세 정보 및 가맹점 조회</h2>
                 <p class="text-gray-600 mb-6">
@@ -209,6 +278,14 @@
                 recipient: { label: '기초수급자', amounts: [40, 10], description: "<strong>기초생활수급자</strong>는 1차 40만원, 2차 10만원으로 <strong>총 50만원</strong>을 지원받습니다. 비수도권/인구감소지역 거주 시 추가 지원금이 있습니다." },
                 top10: { label: '상위 10%', amounts: [15, 0], description: "<strong>상위 10%</strong>는 1차 15만원을 지원받으며, 2차 추가 지급 대상에서는 제외됩니다. 비수도권/인구감소지역 거주 시 추가 지원금이 있습니다." }
             };
+            
+            const faqSupportData = [
+                { q: "외국인도 지원금을 받을 수 있나요?", a: "원칙적으로 대한민국 국민을 대상으로 하므로 제외됩니다. 다만, 내국인과 동일한 건강보험 자격을 갖춘 결혼이민자, 영주권자 등 일부는 예외적으로 지급 대상에 포함될 수 있습니다." },
+                { q: "미성년자도 직접 신청할 수 있나요?", a: "아니요, 미성년자는 원칙적으로 세대주가 대신 신청해야 합니다. 단, 예외적인 경우(세대주가 없거나, 세대주가 신청 불가능한 경우 등)에는 직접 신청이 가능할 수 있습니다." },
+                { q: "신청 기간을 놓치면 어떻게 되나요?", a: "지정된 신청 기간(1차, 2차)이 지나면 신청할 수 없으므로, 반드시 기간 내에 신청해야 지원금을 받을 수 있습니다." },
+                { q: "이사하면 사용 지역을 변경할 수 있나요?", a: "네, 이사 후 전입신고를 마쳤다면 변경된 주소지에서 지원금을 사용할 수 있습니다. 단, 이미 지급받은 카드의 종류(선불카드 등)에 따라 사용 지역 변경이 제한될 수 있으니, 주민센터에 문의하는 것이 가장 정확합니다." },
+                { q: "배달앱에서 사용하고 싶은데, 어떻게 해야 하나요?", a: "배달앱을 통해 주문하더라도, 결제 방식이 '만나서 결제' 또는 '현장 결제'인 경우에만 지원금 사용이 가능합니다. 앱 내에서 미리 결제하는 방식은 대부분 사용이 불가능합니다." }
+            ];
 
             const faqPaybackData = [
                 { q: "상생페이백은 누가 신청할 수 있나요?", a: "2024년에 신용카드나 체크카드를 한 번이라도 사용한 실적이 있는 만 19세 이상이라면 누구나 신청할 수 있습니다. 2차 민생지원금 대상이 아니어도 신청 가능합니다." },
@@ -231,8 +308,25 @@
                 { name: '토스뱅크', url: 'https://www.tossbank.com/articles/livelihoodcoupon-2' },
                 { name: '네이버페이', url: 'https://new-m.pay.naver.com/gov/sobicoupon' }
             ];
+            
+            // --- 자가진단 계산기 ---
+            const healthInsuranceCriteria = {
+                // 가구원 수: { 직장가입자, 지역가입자, 혼합가입자 } (단위: 원)
+                1: { '직장': 220000, '지역': 180000, '혼합': 230000 },
+                2: { '직장': 370000, '지역': 340000, '혼합': 380000 },
+                3: { '직장': 450000, '지역': 430000, '혼합': 470000 },
+                4: { '직장': 510000, '지역': 500000, '혼합': 540000 },
+                5: { '직장': 580000, '지역': 570000, '혼합': 600000 },
+                6: { '직장': 640000, '지역': 630000, '혼합': 660000 },
+                7: { '직장': 700000, '지역': 690000, '혼합': 720000 },
+                8: { '직장': 760000, '지역': 750000, '혼합': 780000 },
+                9: { '직장': 820000, '지역': 810000, '혼합': 840000 },
+                10: { '직장': 880000, '지역': 870000, '혼합': 900000 }
+            };
+            const PROPERTY_CUTOFF = 1200000000; // 12억원
+            const INCOME_CUTOFF = 20000000; // 2천만원
 
-            // --- 탭 ---
+
             const tabSupportBtn = document.getElementById('tab-support');
             const tabPaybackBtn = document.getElementById('tab-payback');
             const contentSupport = document.getElementById('content-support');
@@ -329,8 +423,62 @@
                 cardLinksContainer.appendChild(link);
             });
 
+            // --- 자가진단 계산기 ---
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resultDiv = document.getElementById('calculator-result');
+
+            calculateBtn.addEventListener('click', () => {
+                const householdSize = document.getElementById('household-size').value;
+                const insuranceType = document.getElementById('insurance-type').value;
+                const fee = parseInt(document.getElementById('health-insurance-fee').value, 10) || 0;
+                const property = parseInt(document.getElementById('property-tax-base').value, 10) || 0;
+                const income = parseInt(document.getElementById('financial-income').value, 10) || 0;
+
+                resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-yellow-100', 'text-yellow-800');
+                
+                if (fee === 0) {
+                    resultDiv.classList.add('bg-red-100', 'text-red-800');
+                    resultDiv.innerHTML = `<h4 class="font-bold">입력 오류</h4><p>건강보험료를 정확히 입력해주세요.</p>`;
+                    resultDiv.classList.remove('hidden');
+                    return;
+                }
+
+                // 고액자산가 컷오프 기준
+                if (property > PROPERTY_CUTOFF || income > INCOME_CUTOFF) {
+                    let reason = '';
+                    if (property > PROPERTY_CUTOFF) {
+                        reason = `가구의 재산세 과세표준 합계액(${property.toLocaleString()}원)이 기준(${PROPERTY_CUTOFF.toLocaleString()}원)을 초과합니다.`;
+                    } else {
+                        reason = `가구의 금융소득 합계액(${income.toLocaleString()}원)이 기준(${INCOME_CUTOFF.toLocaleString()}원)을 초과합니다.`;
+                    }
+                    resultDiv.classList.add('bg-yellow-100', 'text-yellow-800');
+                    resultDiv.innerHTML = `<h4 class="font-bold">모의 진단 결과: 지원 대상 제외 (고액 자산가)</h4><p>${reason}</p><p class="text-xs mt-2">* 본 결과는 입력된 값을 바탕으로 한 모의 계산이며, 실제와 다를 수 있습니다.</p>`;
+                    resultDiv.classList.remove('hidden');
+                    return;
+                }
+
+                // 건강보험료 기준
+                const criteria = healthInsuranceCriteria[householdSize][insuranceType];
+                if (fee <= criteria) {
+                    resultDiv.classList.add('bg-green-100', 'text-green-800');
+                    resultDiv.innerHTML = `<h4 class="font-bold">모의 진단 결과: 지원 대상에 해당될 가능성이 높습니다.</h4>
+                        <p>입력하신 건강보험료(${fee.toLocaleString()}원)는 가구원 수 및 가입 유형에 따른 기준액(${criteria.toLocaleString()}원) 이하입니다.</p>
+                        <p class="mt-2">정확한 대상 여부는 카드사 등을 통해 반드시 확인하시기 바랍니다.</p>
+                        <p class="text-xs mt-2">* 본 결과는 입력된 값을 바탕으로 한 모의 계산이며, 실제와 다를 수 있습니다.</p>`;
+                } else {
+                    resultDiv.classList.add('bg-red-100', 'text-red-800');
+                    resultDiv.innerHTML = `<h4 class="font-bold">모의 진단 결과: 지원 대상이 아닐 가능성이 높습니다.</h4>
+                        <p>입력하신 건강보험료(${fee.toLocaleString()}원)가 가구원 수 및 가입 유형에 따른 기준액(${criteria.toLocaleString()}원)을 초과합니다.</p>
+                        <p class="text-xs mt-2">* 본 결과는 입력된 값을 바탕으로 한 모의 계산이며, 실제와 다를 수 있습니다.</p>`;
+                }
+
+                resultDiv.classList.remove('hidden');
+            });
+
+
             // --- 초기화 ---
             createOrUpdateChart('general');
+            createFaq('faq-support-container', faqSupportData);
             createFaq('faq-payback-container', faqPaybackData);
         });
     </script>
