@@ -22,4 +22,5 @@ https://jtech-co.github.io/my-website/(프로그램 제목)%20(공백).html
 * **Gemini 구독 등급 비교**: 블로그 부연설명 용도로 만든 Google Gemini 구독 등급 비교표 
 * **Discharged Military Timer**: 누군가의 전역일 계산기
 * **End of 2025 Timer**: 2025년이 끝나간다
-* *
+* **Naver_Blog_Crawler**: 네이버 블로그 내용 추출기 [개발 중]
+* 
