@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>네이버 블로그 추출기</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/pretendard/variable.css">
+<style>
+  :root{
+    --bg:#0c0f14; --panel:#121722; --muted:#9aa1ad; --accent:#51b2ff; --accent2:#7cf6d2; --fg:#e9edf3; --line:#1f2430;
+  }
+  html,body{height:100%}
+  body{margin:0;background:radial-gradient(1000px 600px at 10% -10%,#172033 0%,#0c0f14 50%) fixed;color:var(--fg);
+       font-family:"Pretendard Variable",system-ui,Apple SD Gothic Neo,Segoe UI,Arial}
+  .wrap{max-width:1200px;margin:32px auto;padding:0 20px}
+  .title{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+  .title h1{font-size:22px;margin:0}
+  .badge{padding:.25rem .5rem;background:linear-gradient(135deg,var(--accent),var(--accent2));
+         border-radius:999px;color:#001018;font-weight:700;font-size:12px}
+  .grid{display:grid;grid-template-columns:350px 1fr;gap:16px}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.02));border:1px solid var(--line);
+        border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  .card h2{margin:0;padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;color:#c9d2e3}
+  .card .body{padding:14px 16px}
+  .row{display:flex;gap:8px;margin-bottom:10px}
+  .row label{min-width:84px;color:var(--muted);font-size:13px;padding-top:10px}
+  input[type="text"],input[type="number"]{
+    width:100%;background:#0e1420;border:1px solid var(--line);color:var(--fg);
+    border-radius:10px;padding:10px 12px;outline:none;transition:border .2s,box-shadow .2s
+  }
+  input:focus{border-color:#2544ff;box-shadow:0 0 0 4px rgba(37,68,255,.15)}
+  .btn{cursor:pointer;border:1px solid var(--line);background:linear-gradient(180deg,#0c121e,#0a0f1a);color:var(--fg);
+       padding:10px 14px;border-radius:10px;font-weight:600;transition:transform .06s ease,opacity .2s}
+  .btn:hover{opacity:.95}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:linear-gradient(135deg,var(--accent) 0%,#376bff 100%);border:none;color:#000;
+               box-shadow:0 8px 30px rgba(81,178,255,.35)}
+  .btn.ghost{background:transparent}
+  .muted{color:var(--muted);font-size:13px}
+  .split{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .log{height:220px;overflow:auto;background:#0b0f18;border:1px dashed #243049;border-radius:10px;
+       padding:10px;font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre-wrap}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .count{font-weight:700}
+  .search{display:flex;align-items:center;gap:8px}
+  table{width:100%;border-collapse:collapse}
+  th,td{border-bottom:1px solid var(--line);padding:10px 12px;vertical-align:top}
+  th{color:#c7d4ea;text-align:left;font-size:13px}
+  tr:hover{background:#0f1522}
+  .link{color:var(--accent);text-decoration:none}
+  .pill{display:inline-block;padding:.1rem .5rem;border-radius:999px;background:#152033;color:#9bd8ff;
+        border:1px solid #1e2d47;font-size:12px}
+  .spinner{width:16px;height:16px;border:2px solid #9bd8ff;border-right-color:transparent;border-radius:50%;
+           display:inline-block;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:980px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">
+      <h1>네이버 블로그 추출</h1>
+      <span class="badge">GitHub Pages + Worker</span>
+    </div>
+
+    <div class="grid">
+      <!-- 설정 & 로그 -->
+      <section class="card">
+        <h2>작업 설정</h2>
+        <div class="body">
+          <div class="row">
+            <label>블로그 주소</label>
+            <input id="blogUrl" type="text" placeholder="예) https://blog.naver.com/PostList.naver?blogId=YOUR_ID" />
+          </div>
+          <div class="row">
+            <label>개수 제한</label>
+            <input id="limit" type="number" min="1" max="500" step="1" value="50"/>
+          </div>
+          <div class="row" style="align-items:center">
+            <label>새 창 보기</label>
+            <input id="newWin" type="checkbox" /> <span class="muted">작업 과정을 새 창에서도 표시</span>
+          </div>
+
+          <div class="split" style="margin:12px 0">
+            <button id="startBtn" class="btn primary">작업 시작</button>
+            <span id="busy" class="muted" style="display:none"><span class="spinner"></span> 추출 중…</span>
+          </div>
+          <div class="muted" style="margin:6px 0 10px">스크랩 글은 자동 제외합니다. 결과는 우측 표에 나타납니다.</div>
+          <div class="toolbar">
+            <button id="saveExcel" class="btn">엑셀로 저장</button>
+            <button id="savePdf" class="btn">PDF로 저장</button>
+          </div>
+
+          <h2 style="margin-top:14px">로그</h2>
+          <div id="log" class="body log"></div>
+        </div>
+      </section>
+
+      <!-- 결과 표 -->
+      <section class="card">
+        <h2>추출 결과</h2>
+        <div class="body">
+          <div class="topbar">
+            <div><span class="pill">추출 항목</span> <span id="count" class="count">0</span> 개</div>
+            <div class="search">
+              <input id="q" type="text" placeholder="검색(제목/내용)" />
+              <button id="clearQ" class="btn ghost">지우기</button>
+            </div>
+          </div>
+          <div style="overflow:auto;max-height:560px;border:1px solid var(--line);border-radius:12px">
+            <table id="table">
+              <thead>
+                <tr>
+                  <th style="width:56px">#</th>
+                  <th>게시글 제목</th>
+                  <th>게시글 내용(요약)</th>
+                  <th style="width:120px">링크</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"><tr><td colspan="4" class="muted">결과가 없습니다.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- 라이브러리 -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <script>
+    /* ============ Cloudflare Worker 프록시 ============ */
+    const PROXY = "https://naver-proxy-worker.mjwbryan131.workers.dev/";
+
+    /* ======= 유틸 ======= */
+    const $ = sel => document.querySelector(sel);
+    const esc = s => (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    const log = msg => { const t = new Date().toLocaleString(); $("#log").textContent += `[${t}] ${msg}\n`; $("#log").scrollTop = $("#log").scrollHeight; if(win){ winLog(`[${t}] ${msg}`);} };
+
+    let rows = [];
+    let win = null;
+
+    const winInit = () => {
+      if(!$("#newWin").checked) { win = null; return; }
+      win = window.open("", "_blank", "width=560,height=640");
+      if(!win) return; // 팝업 차단 무시
+      win.document.write(`
+        <!doctype html><title>작업 진행</title>
+        <style>
+          body{margin:0;background:#0b0f18;color:#e9edf3;font-family:ui-monospace,Consolas,monospace}
+          h1{font-size:14px;margin:0;padding:12px;border-bottom:1px solid #1f2430}
+          pre{white-space:pre-wrap;margin:0;padding:12px;height:calc(100vh - 44px);overflow:auto}
+        </style>
+        <h1>네이버 블로그 추출 · 진행 로그</h1>
+        <pre id="wlog"></pre>
+      `);
+    };
+    const winLog = s => { if(!win) return; const p = win.document.getElementById("wlog"); p.textContent += s + "\\n"; p.scrollTop = p.scrollHeight; };
+
+    function render(list){
+      const q = $("#q").value.trim().toLowerCase();
+      const filtered = q ? list.filter(r =>
+        (r.title||"").toLowerCase().includes(q) ||
+        (r.content||"").toLowerCase().includes(q)
+      ) : list;
+
+      $("#count").textContent = filtered.length;
+      const tb = $("#tbody");
+      tb.innerHTML = "";
+      if(!filtered.length){
+        tb.innerHTML = `<tr><td colspan="4" class="muted">결과가 없습니다.</td></tr>`;
+        return;
+      }
+      filtered.forEach((r, i) => {
+        const tr = document.createElement("tr");
+        const short = (r.content||"").replace(/\\s+/g,' ').slice(0,180) + ((r.content||"").length>180?'…':'');
+        tr.innerHTML = `
+          <td>${i+1}</td>
+          <td>${esc(r.title||'')}</td>
+          <td>${esc(short)}</td>
+          <td><a class="link" target="_blank" href="${r.link}">열기</a></td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function getBlogId(input) {
+      try{
+        if (!input.includes("://")) return input;
+        const u = new URL(input);
+        const q = u.searchParams.get("blogId");
+        if (q) return q;
+        if (u.hostname.includes("blog.naver.com")) {
+          const path = u.pathname.replace(/^\\/+/,"");
+          if (path && !path.startsWith("Post")) return path.split("/")[0];
+        }
+      }catch{}
+      return null;
+    }
+
+    const viaProxyText = async (url) => (await fetch(PROXY + encodeURIComponent(url))).text();
+
+    const pickContent = (doc) => {
+      const sels = ["#postViewArea", ".se-main-container", ".se_component_wrap", "article"];
+      for (const s of sels) {
+        const el = doc.querySelector(s);
+        if (el && (el.textContent||"").trim().length > 20) return el.textContent.trim();
+      }
+      return (doc.body?.textContent || "").trim();
+    };
+
+    const isScrap = (title, content) => /스크랩|퍼간글|scrap/i.test(`${title} ${content}`);
+
+    async function start(){
+      const blogUrl = $("#blogUrl").value.trim();
+      const limit = parseInt($("#limit").value,10) || 50;
+      if (!blogUrl) return alert("블로그 주소를 입력하세요.");
+
+      $("#busy").style.display = "inline-flex";
+      $("#startBtn").disabled = true;
+      rows = []; render(rows);
+      winInit();
+
+      log("작업이 시작되었습니다.");
+
+      try {
+        const blogId = getBlogId(blogUrl);
+        if (!blogId) throw new Error("유효한 블로그 주소/ID가 아닙니다.");
+
+        // RSS 최신 글 리스팅
+        const rssUrl = `https://rss.blog.naver.com/${blogId}.xml`;
+        log(`RSS 요청: ${rssUrl}`);
+        const rssText = await viaProxyText(rssUrl);
+        const rss = new DOMParser().parseFromString(rssText, "text/xml");
+        const items = [...rss.querySelectorAll("item")].slice(0, limit).map(it => ({
+          title: it.querySelector("title")?.textContent || "",
+          link: it.querySelector("link")?.textContent || ""
+        }));
+
+        if (!items.length){
+          log("RSS 항목이 없습니다.");
+          render(rows); return;
+        }
+
+        // 각 글 본문 추출
+        const out = [];
+        let idx = 0;
+        for (const it of items) {
+          idx++;
+          log(`글 ${idx}/${items.length} 수집 중…`);
+          const html = await viaProxyText(it.link);
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const content = pickContent(doc);
+          if (isScrap(it.title, content)) { log(" · 스크랩 감지 → 제외"); continue; }
+          out.push({ title: it.title, link: it.link, content });
+          await new Promise(r => setTimeout(r, 250)); // 매너 지연
+        }
+
+        rows = out;
+        log(`모든 게시글을 가져와 작업이 종료되었습니다. 총 ${rows.length}개`);
+        render(rows);
+
+      } catch(e){
+        log(`오류: ${e.message}`);
+        alert("작업 중 오류가 발생했습니다. 로그를 확인하세요.");
+      } finally {
+        $("#busy").style.display = "none";
+        $("#startBtn").disabled = false;
+      }
+    }
+
+    // Excel 저장
+    function saveExcel(){
+      if(!rows.length) return alert("저장할 데이터가 없습니다.");
+      const ws = XLSX.utils.json_to_sheet(rows.map(({title, content, link}) => ({제목:title, 내용:content, 링크:link})));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "네이버블로그");
+      XLSX.writeFile(wb, "naver-blog-export.xlsx");
+    }
+
+    // PDF 저장
+    function savePdf(){
+      if(!rows.length) return alert("저장할 데이터가 없습니다.");
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({unit:'pt', format:'a4'});
+      const pad = 48, width = doc.internal.pageSize.getWidth() - pad*2, line = 18;
+
+      const draw = (text) => {
+        const parts = doc.splitTextToSize(text || "", width);
+        for (const ln of parts) {
+          if(y > doc.internal.pageSize.getHeight() - pad){ doc.addPage(); y = pad; }
+          doc.text(ln, pad, y); y += line;
+        }
+      };
+
+      let y = pad;
+      rows.forEach((r, i) => {
+        if(i>0){ doc.addPage(); y = pad; }
+        doc.setFont('helvetica','bold'); doc.setFontSize(14); draw(`${r.title||''}`); y += 6;
+        doc.setFont('helvetica','normal'); doc.setFontSize(10); draw(`${r.link||''}`); y += 10;
+        doc.setFontSize(12); draw((r.content||'').replace(/\\r?\\n/g,'\\n'));
+      });
+      doc.save("naver-blog-export.pdf");
+    }
+
+    $("#startBtn").addEventListener("click", start);
+    $("#saveExcel").addEventListener("click", saveExcel);
+    $("#savePdf").addEventListener("click", savePdf);
+    $("#q").addEventListener("input", () => render(rows));
+    $("#clearQ").addEventListener("click", () => { $("#q").value=""; render(rows); });
+  </script>
+</body>
+</html>
