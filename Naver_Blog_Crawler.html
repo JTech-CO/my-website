@@ -49,7 +49,7 @@
   th,td{border-bottom:1px solid var(--line);padding:10px 12px;vertical-align:top}
   th{color:#c7d4ea;text-align:left;font-size:13px}
   tr:hover{background:#0f1522}
-  .link{color:var(--accent);text-decoration:none}
+  .link{color:#51b2ff;text-decoration:none}
   .pill{display:inline-block;padding:.1rem .5rem;border-radius:999px;background:#152033;color:#9bd8ff;
         border:1px solid #1e2d47;font-size:12px}
   .spinner{width:16px;height:16px;border:2px solid #9bd8ff;border-right-color:transparent;border-radius:50%;
@@ -61,7 +61,7 @@
 <body>
   <div class="wrap">
     <div class="title">
-      <h1>네이버 블로그 추출</h1>
+      <h1>네이버 블로그 추출기</h1>
       <span class="badge">GitHub Pages + Worker</span>
     </div>
 
@@ -90,7 +90,7 @@
           <div class="muted" style="margin:6px 0 10px">스크랩 글은 자동 제외합니다. 결과는 우측 표에 나타납니다.</div>
           <div class="toolbar">
             <button id="saveExcel" class="btn">엑셀로 저장</button>
-            <button id="savePdf" class="btn">PDF로 저장</button>
+            <button id="saveJson" class="btn">JSON으로 저장</button>
           </div>
 
           <h2 style="margin-top:14px">로그</h2>
@@ -98,7 +98,7 @@
         </div>
       </section>
 
-      <!-- 결과 표 -->
+      <!-- 과 표 -->
       <section class="card">
         <h2>추출 결과</h2>
         <div class="body">
@@ -127,13 +127,11 @@
     </div>
   </div>
 
-  <!-- 라이브러리 -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <script>
     /* ============ Cloudflare Worker 프록시 ============ */
-    const PROXY = "https://naver-proxy-worker.mjwbryan131.workers.dev/?url=";
+    const PROXY = "https://nb-proxy.yourname.workers.dev/?url=";
 
     /* ======= 유틸 ======= */
     const $ = sel => document.querySelector(sel);
@@ -146,7 +144,7 @@
     const winInit = () => {
       if(!$("#newWin").checked) { win = null; return; }
       win = window.open("", "_blank", "width=560,height=640");
-      if(!win) return; // 팝업 차단 무시
+      if(!win) return;
       win.document.write(`
         <!doctype html><title>작업 진행</title>
         <style>
@@ -230,7 +228,7 @@
         const blogId = getBlogId(blogUrl);
         if (!blogId) throw new Error("유효한 블로그 주소/ID가 아닙니다.");
 
-        // RSS 최신 글 리스팅
+        // RSS 최신 글
         const rssUrl = `https://rss.blog.naver.com/${blogId}.xml`;
         log(`RSS 요청: ${rssUrl}`);
         const rssText = await viaProxyText(rssUrl);
@@ -256,7 +254,7 @@
           const content = pickContent(doc);
           if (isScrap(it.title, content)) { log(" · 스크랩 감지 → 제외"); continue; }
           out.push({ title: it.title, link: it.link, content });
-          await new Promise(r => setTimeout(r, 250)); // 매너 지연
+          await new Promise(r => setTimeout(r, 250));
         }
 
         rows = out;
@@ -272,7 +270,7 @@
       }
     }
 
-    // Excel 저장
+    // 엑셀 저장
     function saveExcel(){
       if(!rows.length) return alert("저장할 데이터가 없습니다.");
       const ws = XLSX.utils.json_to_sheet(rows.map(({title, content, link}) => ({제목:title, 내용:content, 링크:link})));
@@ -281,38 +279,24 @@
       XLSX.writeFile(wb, "naver-blog-export.xlsx");
     }
 
-    // PDF 저장
-    function savePdf(){
+    // JSON 저장 (UTF-8)
+    function saveJson(){
       if(!rows.length) return alert("저장할 데이터가 없습니다.");
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({unit:'pt', format:'a4'});
-      const pad = 48, width = doc.internal.pageSize.getWidth() - pad*2, line = 18;
-
-      const draw = (text) => {
-        const parts = doc.splitTextToSize(text || "", width);
-        for (const ln of parts) {
-          if(y > doc.internal.pageSize.getHeight() - pad){ doc.addPage(); y = pad; }
-          doc.text(ln, pad, y); y += line;
-        }
-      };
-
-      let y = pad;
-      rows.forEach((r, i) => {
-        if(i>0){ doc.addPage(); y = pad; }
-        doc.setFont('helvetica','bold'); doc.setFontSize(14); draw(`${r.title||''}`); y += 6;
-        doc.setFont('helvetica','normal'); doc.setFontSize(10); draw(`${r.link||''}`); y += 10;
-        doc.setFontSize(12); draw((r.content||'').replace(/\r?\\n/g,'\\n'));
-      });
-      doc.save("naver-blog-export.pdf");
+      const data = rows.map(({title, content, link}) => ({ title, content, link }));
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "naver-blog-export.json";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
     }
 
     $("#startBtn").addEventListener("click", start);
     $("#saveExcel").addEventListener("click", saveExcel);
-    $("#savePdf").addEventListener("click", savePdf);
+    $("#saveJson").addEventListener("click", saveJson);
     $("#q").addEventListener("input", () => render(rows));
     $("#clearQ").addEventListener("click", () => { $("#q").value=""; render(rows); });
   </script>
 </body>
 </html>
-
-
