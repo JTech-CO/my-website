@@ -76,7 +76,7 @@
           </div>
           <div class="row">
             <label>개수 제한</label>
-            <input id="limit" type="number" min="1" max="1000" step="1" value="50"/>
+            <input id="limit" type="number" min="1" max="1000" step="1" value="100"/>
           </div>
           <div class="row" style="align-items:center">
             <label>새 창 보기</label>
@@ -131,7 +131,7 @@
 
   <script>
     /* ============ Cloudflare Worker 프록시 ============ */
-    const PROXY = "https://naver-proxy-worker.mjwbryan131.workers.dev/?url=";
+    const PROXY = "https://nb-proxy.yourname.workers.dev/?url=";
 
     /* ======= 유틸 ======= */
     const $ = sel => document.querySelector(sel);
@@ -214,7 +214,7 @@
 
     async function start(){
       const blogUrl = $("#blogUrl").value.trim();
-      const limit = parseInt($("#limit").value,10) || 1000; /* 크롤링 가능한 글 갯수 최대 1000개 */
+      const limit = parseInt($("#limit").value,10) || 100;
       if (!blogUrl) return alert("블로그 주소를 입력하세요.");
 
       $("#busy").style.display = "inline-flex";
@@ -300,5 +300,3 @@
   </script>
 </body>
 </html>
-
-
