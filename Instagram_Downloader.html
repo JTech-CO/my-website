@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>인스타그램 비디오 다운로더</title>
+<style>
+  /* 스타일 */
+  body{margin:0;padding:0;background:#000;font-family:"Microsoft Sans Serif","Arial",sans-serif;text-align:center;}
+  .window{width:820px;max-width:96vw;margin:48px auto;background:#E0E0E0;border:2px solid #fff;border-right-color:#808080;border-bottom-color:#808080;box-shadow:4px 4px 0 #808080;}
+  .titlebar{background:#000080;color:#fff;text-align:left;font-weight:bold;padding:8px 10px;position:relative;user-select:none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}
+  .titlebar-buttons{position:absolute;right:4px;top:4px;}
+  .titlebar-btn{display:inline-block;width:20px;height:20px;line-height:18px;text-align:center;border:2px solid #fff;border-right-color:#808080;border-bottom-color:#808080;background:#E0E0E0;color:#000;font-size:14px;margin-left:4px; cursor: pointer;}
+  
+  /* X 버튼 호버링 */
+  #close-btn:hover {
+    background-color: red;
+    color: white;
+  }
+  .content{padding:20px;}
+  h1{margin:0 0 16px 0;font-size:24px;}
+
+  /* 패널 + 버튼 */
+  .panel{background:#C0C0C0;border:2px solid #fff;border-right-color:#808080;border-bottom-color:#808080;padding:14px;margin:10px auto 18px auto;width:calc(100% - 40px);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-width:190px;height:40px;padding:0 12px;margin:6px;background:#E0E0E0;border:2px solid #fff;border-right-color:#808080;border-bottom-color:#808080;font-size:14px;cursor:pointer;text-decoration:none;color:#000;}
+  .btn:active{border:2px solid #808080;border-right-color:#fff;border-bottom-color:#fff;}
+  .btn:hover{filter:brightness(0.96);}
+
+  /* 그리드 */
+  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;justify-items:center;}
+  @media (max-width:740px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));}.btn{min-width:160px;height:38px;font-size:13px;}}
+  @media (max-width:420px){.grid{grid-template-columns:1fr;}.btn{width:100%;}}
+
+  /* 안내문 */
+  .fine{font-size:12px;color:#2a2a2a;line-height:1.5;}
+  .fine a {color: blue; text-decoration: underline;}
+  .kicker{font-size:12px;color:#000;background:#FFD966;display:inline-block;padding:2px 6px;border:1px solid #AD8B00;margin-left:6px;}
+</style>
+</head>
+<body>
+  <div class="window">
+    <div class="titlebar">
+      Instagram video download site
+      <div class="titlebar-buttons">
+        <div class="titlebar-btn">-</div>
+        <div class="titlebar-btn" id="close-btn">x</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <h1>인스타그램 비디오 다운로더 목록 </h1>
+
+      <!-- 목록 -->
+      <div class="panel">
+        <div class="grid">
+          <a class="btn" target="_blank" href="https://www.save-free.com/">Save-free.com</a>
+          <a class="btn" target="_blank" href="https://sssinstagram.com/">SSSInstagram.com</a>
+          <a class="btn" target="_blank" href="https://fastvideosave.net/">Fastvideosave.net</a>
+          <a class="btn" target="_blank" href="https://indown.io/">Indown.io</a>
+          <a class="btn" target="_blank" href="https://igram.world/">iGram</a>
+          <a class="btn" target="_blank" href="https://snapinsta.to/en">SnapInsta</a>
+          <a class="btn" target="_blank" href="https://savefrom.cfd/">SaveFrom</a>
+          <a class="btn" target="_blank" href="https://inflact.com/instagram-downloader/">Inflact.com</a>
+          <a class="btn" target="_blank" href="https://fastdl.app/en">FastDL.app</a>
+
+          <a class="btn" target="_blank" href="https://toolzu.com/downloader/instagram/video/">Toolzu</a>
+          <a class="btn" target="_blank" href="https://savevid.to/">SaveVid</a>
+          <a class="btn" target="_blank" href="https://www.storysaver.net/">StorySaver.net</a>
+          <a class="btn" target="_blank" href="https://saveclip.app/en">SaveClip</a>
+          <a class="btn" target="_blank" href="https://downloadgram.org/">DownloadGram</a>
+        </div>
+      </div>
+
+      <p class="fine">
+        ※ 타인 콘텐츠의 무단 다운로드·재업로드는 금지되며, <a href="https://transparency.meta.com/ko-kr/policies/community-standards/" target="_blank">Instagram 약관 및 저작권 법령</a>을 준수해야 합니다.
+      </p>
+    </div>
+  </div>
+
+<script>
+    const closeBtn = document.getElementById('close-btn');
+    let isHoveringOnCloseBtn = false;
+
+    // 마우스 호버링 ON
+    closeBtn.addEventListener('mouseover', () => {
+      isHoveringOnCloseBtn = true;
+    });
+
+    // 마우스 호버링 OUT
+    closeBtn.addEventListener('mouseout', () => {
+      isHoveringOnCloseBtn = false;
+    });
+
+    // 키보드 입력 감지
+    document.addEventListener('keydown', (event) => {
+      if (isHoveringOnCloseBtn && event.key.toLowerCase() === 'x') {
+        window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+      }
+    });
+  </script>
+</body>
+</html>
