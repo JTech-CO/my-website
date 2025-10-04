@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Server Boost Benefits</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0c0a14;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .glassmorphic {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .level-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .level-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 0 30px rgba(255, 108, 251, 0.4), 0 0 15px rgba(88, 101, 242, 0.3);
+            border-color: #5865F2;
+        }
+
+        .level-card .perk-grid {
+            grid-template-columns: 2fr 1fr;
+        }
+
+        .perk-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .perk-item:last-child {
+            border-bottom: none;
+        }
+
+        .perk-value {
+            justify-self: end;
+            font-weight: 600;
+        }
+
+        .level-title-glow {
+            text-shadow: 0 0 8px currentColor;
+        }
+
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .particle {
+            position: absolute;
+            background-color: var(--particle-color);
+            border-radius: 50%;
+            animation: fly-out 1.2s ease-out forwards;
+        }
+        
+        .sparkle {
+            position: absolute;
+            background-image: radial-gradient(circle, var(--particle-color) 10%, transparent 80%);
+            border-radius: 50%;
+            animation: sparkle-fade 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .ring {
+            position: absolute;
+            border: 2px solid var(--particle-color);
+            border-radius: 50%;
+            animation: ripple-out 1s ease-out forwards;
+            opacity: 1;
+        }
+
+        @keyframes fly-out {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes sparkle-fade {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            50% {
+                 opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes ripple-out {
+            0% {
+                transform: scale(0);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        
+        details summary {
+            list-style: none;
+            cursor: pointer;
+        }
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+        details summary .icon {
+            transition: transform 0.2s;
+        }
+        details[open] summary .icon {
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div id="particle-container" class="particle-container"></div>
+    <div class="min-h-screen w-full p-4 sm:p-8">
+        <div class="max-w-7xl mx-auto">
+            <header class="text-center my-12">
+                <h1 class="text-4xl md:text-5xl font-black tracking-tight">최고의 특전으로 서버 업그레이드</h1>
+                <p class="text-lg text-gray-400 mt-4 max-w-2xl mx-auto">서버 부스트로 레벨을 올리고 커뮤니티를 위한 특별한 혜택을 잠금 해제하세요.</p>
+            </header>
+
+            <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- 기본 -->
+                <div class="level-card rounded-2xl p-6 glassmorphic" data-level="0">
+                     <h2 class="text-2xl font-bold">부스트 해제됨</h2>
+                    <p class="text-sm text-gray-400">부스트 없음</p>
+                    <div class="mt-8 space-y-4 text-sm">
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">이모지 슬롯</span> <span class="perk-value">50</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">스티커 슬롯</span> <span class="perk-value">5</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사운드보드 슬롯</span> <span class="perk-value">8</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">방송 품질</span> <span class="perk-value">720p & 30fps</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">오디오 품질</span> <span class="perk-value">96kbps</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">업로드 크기 제한</span> <span class="perk-value">10MB</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">동영상 스테이지 채널 좌석</span> <span class="perk-value">50</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">움직이는 서버 아이콘</span> <span class="perk-value text-gray-500">❌</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">서버 초대 배경</span> <span class="perk-value text-gray-500">❌</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">서버 배너</span> <span class="perk-value text-gray-500">❌</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사용자 지정 역할 아이콘</span> <span class="perk-value text-gray-500">❌</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사용자 지정 초대 링크</span> <span class="perk-value text-gray-500">❌</span></div>
+                    </div>
+                </div>
+
+                <!-- 레벨 1 -->
+                <div class="level-card rounded-2xl p-6 glassmorphic" data-level="1">
+                    <h2 class="text-2xl font-bold text-[#FF6CFB] level-title-glow">레벨 1</h2>
+                    <p class="text-sm text-gray-400">부스트 2번</p>
+                     <div class="mt-8 space-y-4 text-sm">
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">이모지 슬롯</span> <span class="perk-value text-green-400">+50</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">스티커 슬롯</span> <span class="perk-value text-green-400">+10</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사운드보드 슬롯</span> <span class="perk-value text-green-400">+16</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">방송 품질</span> <span class="perk-value">720p & 60fps</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">오디오 품질</span> <span class="perk-value">128kbps</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">업로드 크기 제한</span> <span class="perk-value">10MB</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">동영상 스테이지 채널 좌석</span> <span class="perk-value">50</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">움직이는 서버 아이콘</span> <span class="perk-value text-green-400">✅</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">서버 초대 배경</span> <span class="perk-value text-green-400">✅</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">서버 배너</span> <span class="perk-value text-gray-500">❌</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사용자 지정 역할 아이콘</span> <span class="perk-value text-gray-500">❌</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사용자 지정 초대 링크</span> <span class="perk-value text-gray-500">❌</span></div>
+                    </div>
+                </div>
+
+                <!-- 레벨 2 -->
+                <div class="level-card rounded-2xl p-6 glassmorphic" data-level="2">
+                    <h2 class="text-2xl font-bold text-[#5865F2] level-title-glow">레벨 2</h2>
+                    <p class="text-sm text-gray-400">부스트 7번</p>
+                    <div class="mt-8 space-y-4 text-sm">
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">이모지 슬롯</span> <span class="perk-value text-green-400">+100</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">스티커 슬롯</span> <span class="perk-value text-green-400">+25</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사운드보드 슬롯</span> <span class="perk-value text-green-400">+28</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">방송 품질</span> <span class="perk-value">1080p & 60fps</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">오디오 품질</span> <span class="perk-value">256kbps</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">업로드 크기 제한</span> <span class="perk-value">50MB</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">동영상 스테이지 채널 좌석</span> <span class="perk-value text-green-400">+100</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">움직이는 서버 아이콘</span> <span class="perk-value text-green-400">✅</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">서버 초대 배경</span> <span class="perk-value text-green-400">✅</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">서버 배너</span> <span class="perk-value">정지</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사용자 지정 역할 아이콘</span> <span class="perk-value text-green-400">✅</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사용자 지정 초대 링크</span> <span class="perk-value text-gray-500">❌</span></div>
+                    </div>
+                </div>
+
+                <!-- 레벨 3 -->
+                <div class="level-card rounded-2xl p-6 glassmorphic" data-level="3">
+                    <h2 class="text-2xl font-bold bg-gradient-to-r from-[#FF6CFB] to-[#5865F2] text-transparent bg-clip-text level-title-glow">레벨 3</h2>
+                    <p class="text-sm text-gray-400">부스트 14번</p>
+                    <div class="mt-8 space-y-4 text-sm">
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">이모지 슬롯</span> <span class="perk-value text-green-400">+200</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">스티커 슬롯</span> <span class="perk-value text-green-400">+55</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사운드보드 슬롯</span> <span class="perk-value text-green-400">+40</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">방송 품질</span> <span class="perk-value">1080p & 60fps</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">오디오 품질</span> <span class="perk-value">384kbps</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">업로드 크기 제한</span> <span class="perk-value">100MB</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">동영상 스테이지 채널 좌석</span> <span class="perk-value text-green-400">+250</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">움직이는 서버 아이콘</span> <span class="perk-value text-green-400">✅</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">서버 초대 배경</span> <span class="perk-value text-green-400">✅</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">서버 배너</span> <span class="perk-value">움직임</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사용자 지정 역할 아이콘</span> <span class="perk-value text-green-400">✅</span></div>
+                        <div class="flex justify-between items-center perk-item pb-2"><span class="text-gray-300">사용자 지정 초대 링크</span> <span class="perk-value text-green-400">✅</span></div>
+                    </div>
+                </div>
+            </main>
+
+            <section class="mt-24 mb-12">
+                <h2 class="text-3xl font-bold text-center mb-10">자주 묻는 질문 (FAQ)</h2>
+                <div class="max-w-3xl mx-auto space-y-4">
+                    <details class="glassmorphic rounded-lg p-5">
+                        <summary class="flex justify-between items-center font-semibold">
+                            서버 부스팅이란 무엇인가요?
+                            <span class="icon text-xl text-[#FF6CFB]">+</span>
+                        </summary>
+                        <p class="text-gray-300 mt-4 text-sm leading-relaxed">서버 부스팅은 Discord Nitro 구독자가 자신이 좋아하는 커뮤니티에 특별한 혜택을 부여할 수 있는 기능입니다. 각 부스트는 서버 레벨에 기여하며, 레벨이 오를수록 모든 서버 멤버를 위한 더 많은 기능이 잠금 해제됩니다.</p>
+                    </details>
+                    <details class="glassmorphic rounded-lg p-5">
+                        <summary class="flex justify-between items-center font-semibold">
+                            부스트 레벨은 어떻게 확인하나요?
+                             <span class="icon text-xl text-[#FF6CFB]">+</span>
+                        </summary>
+                        <p class="text-gray-300 mt-4 text-sm leading-relaxed">서버 설정 메뉴의 '서버 부스트' 탭에서 현재 서버의 레벨과 다음 레벨까지 필요한 부스트 수를 확인할 수 있습니다. 서버 이름 옆에 있는 드롭다운 메뉴를 통해서도 접근 가능합니다.</p>
+                    </details>
+                     <details class="glassmorphic rounded-lg p-5">
+                        <summary class="flex justify-between items-center font-semibold">
+                           부스트를 다른 서버로 옮길 수 있나요?
+                             <span class="icon text-xl text-[#FF6CFB]">+</span>
+                        </summary>
+                        <p class="text-gray-300 mt-4 text-sm leading-relaxed">네, 가능합니다. 하지만 부스트를 다른 서버로 이전하면 7일의 쿨다운 기간이 적용되어 그 기간 동안에는 다시 다른 서버로 옮길 수 없습니다. 사용자 설정의 '서버 부스트' 탭에서 부스트를 관리할 수 있습니다.</p>
+                    </details>
+                     <details class="glassmorphic rounded-lg p-5">
+                        <summary class="flex justify-between items-center font-semibold">
+                           Nitro 구독을 취소하면 부스트는 어떻게 되나요?
+                             <span class="icon text-xl text-[#FF6CFB]">+</span>
+                        </summary>
+                        <p class="text-gray-300 mt-4 text-sm leading-relaxed">Nitro 구독이 만료되면 구독에 포함된 서버 부스트도 함께 만료됩니다. 부스트가 제거되기 전에 3일의 유예 기간이 주어지므로, 그 안에 구독을 갱신하면 부스트를 유지할 수 있습니다.</p>
+                    </details>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const particleContainer = document.getElementById('particle-container');
+        const levelCards = document.querySelectorAll('.level-card');
+
+        const colors = {
+            level1: '#FF6CFB', // Boost Pink
+            level2: '#5865F2', // Discord Blue
+            level3: ['#FF6CFB', '#5865F2', '#57F287']
+        };
+
+        function createParticles(x, y, color) {
+            const count = 20;
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 8 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.setProperty('--particle-color', color);
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                
+                const angle = Math.random() * 360;
+                const radius = Math.random() * 150 + 50;
+                const targetX = Math.cos(angle * Math.PI / 180) * radius;
+                const targetY = Math.sin(angle * Math.PI / 180) * radius;
+
+                particle.style.setProperty('--x', `${targetX}px`);
+                particle.style.setProperty('--y', `${targetY}px`);
+
+                particleContainer.appendChild(particle);
+                setTimeout(() => particle.remove(), 1200);
+            }
+        }
+
+        function createSparkles(x, y, color) {
+             const count = 15;
+            for (let i = 0; i < count; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.classList.add('sparkle');
+                const size = Math.random() * 30 + 10;
+                sparkle.style.width = `${size}px`;
+                sparkle.style.height = `${size}px`;
+                sparkle.style.setProperty('--particle-color', color);
+                
+                const angle = Math.random() * 360;
+                const radius = Math.random() * 100;
+                const sparkX = x + Math.cos(angle * Math.PI / 180) * radius;
+                const sparkY = y + Math.sin(angle * Math.PI / 180) * radius;
+                
+                sparkle.style.left = `${sparkX}px`;
+                sparkle.style.top = `${sparkY}px`;
+                sparkle.style.animationDelay = `${Math.random() * 0.3}s`;
+
+                particleContainer.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 800);
+            }
+        }
+        
+        function createRings(x, y, color) {
+            const count = 3;
+            for (let i = 0; i < count; i++) {
+                const ring = document.createElement('div');
+                ring.classList.add('ring');
+                const size = 50;
+                ring.style.width = `${size}px`;
+                ring.style.height = `${size}px`;
+                ring.style.left = `${x - size/2}px`;
+                ring.style.top = `${y - size/2}px`;
+                ring.style.setProperty('--particle-color', color);
+                ring.style.animationDelay = `${i * 0.2}s`;
+                particleContainer.appendChild(ring);
+                setTimeout(() => ring.remove(), 1000);
+            }
+        }
+
+
+        levelCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 4;
+                const level = parseInt(card.dataset.level);
+
+                if (level >= 1) {
+                    createParticles(x, y, colors.level1);
+                }
+                if (level >= 2) {
+                    setTimeout(() => createRings(x, y, colors.level2), 100);
+                }
+                if (level >= 3) {
+                    setTimeout(() => {
+                        colors.level3.forEach(color => createSparkles(x, y, color));
+                    }, 200);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
