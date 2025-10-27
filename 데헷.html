@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>데헷</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- canvas confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            overflow: hidden;
+        }
+
+        /* 애니메이션 */
+        #initial-text {
+            /* 'wiggle, pulse-shadow */
+            animation: wiggle 0.7s ease-in-out infinite, pulse-shadow 2s ease-in-out infinite alternate;
+            transition: transform 0.2s ease, text-shadow 0.2s ease;
+        }
+
+        #initial-text:hover {
+            transform: scale(1.1);
+            text-shadow: 0 0 20px rgba(255, 0, 255, 0.7), 0 0 30px rgba(0, 255, 255, 0.7);
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-3deg) scale(1.02); }
+            75% { transform: rotate(3deg) scale(1.02); }
+        }
+
+        @keyframes pulse-shadow {
+            0% { text-shadow: 0 0 5px rgba(0, 0, 0, 0.2); }
+            100% { text-shadow: 0 0 25px rgba(255, 0, 255, 0.5), 0 0 15px rgba(0, 255, 255, 0.5); }
+        }
+
+        /* 파티클 */
+        .dehet-particle {
+            position: absolute;
+            font-weight: 900;
+            pointer-events: none;
+            will-change: transform, opacity;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body class="bg-white h-screen flex items-center justify-center m-0 overflow-hidden">
+    <div id="start-screen" class="flex items-center justify-center w-full h-full">
+        <h1 id="initial-text" class="text-black text-9xl font-black cursor-pointer">
+            데헷
+        </h1>
+    </div>
+
+    <div id="effect-container" class="fixed top-0 left-0 w-full h-full hidden pointer-events-none">
+    </div>
+
+    <script>
+        const startScreen = document.getElementById('start-screen');
+        const initialText = document.getElementById('initial-text');
+        const effectContainer = document.getElementById('effect-container');
+
+        let effectInterval = null; // 데헷
+        let confettiInterval = null; // 폭죽
+
+        initialText.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            effectContainer.classList.remove('hidden');
+
+            startTheChaos(); // 혼돈
+            setTimeout(() => {
+                stopTheChaos();
+            }, 10000); // 10초
+        });
+
+        function startTheChaos() {
+            // 데헷 파티클 0.05초
+            effectInterval = setInterval(createDehetParticle, 50);
+            // 폭죽 0.3초
+            confettiInterval = setInterval(launchConfetti, 300);
+        }
+
+        function stopTheChaos() {
+            clearInterval(effectInterval);
+            clearInterval(confettiInterval);
+
+            confetti.reset();
+
+            effectContainer.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            effectContainer.innerHTML = '';
+        }
+
+        function launchConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 180,
+                origin: { y: Math.random(), x: Math.random() },
+                colors: ['#ff00ff', '#00ffff', '#ffff00', '#00ff00', '#ff0000']
+            });
+            
+            confetti({
+                particleCount: 50,
+                shapes: ['star'],
+                spread: 100,
+                origin: { y: Math.random(), x: Math.random() },
+                scalar: 1.5
+            });
+        }
+
+        function createDehetParticle() {
+            const particle = document.createElement('div');
+            particle.textContent = '데헷';
+            particle.className = 'dehet-particle';
+
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * (window.innerHeight + 200) - 100;
+            const size = Math.random() * 60 + 20;
+            const startRotation = Math.random() * 360 - 180;
+            const endRotation = startRotation + (Math.random() * 720 - 360);
+            const duration = Math.random() * 3000 + 2000;
+            const color = `hsl(${Math.random() * 360}, 100%, 70%)`; // 무지개색
+
+            // 초기 스타일
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            particle.style.fontSize = `${size}px`;
+            particle.style.color = color;
+            particle.style.transform = `translate(-50%, -50%) rotate(${startRotation}deg) scale(0)`; // 작게 시작
+            effectContainer.appendChild(particle);
+
+            // Web Animations API
+            particle.animate([
+                { 
+                    transform: `translate(-50%, -50%) rotate(${startRotation}deg) scale(1)`, 
+                    opacity: 1, 
+                    offset: 0.1
+                }, 
+                { 
+                    transform: `translate(-50%, -50%) translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) rotate(${endRotation}deg) scale(1.2)`, 
+                    opacity: 0.8,
+                    offset: 0.8
+                },
+                { 
+                    transform: `translate(-50%, -50%) translate(${Math.random() * 400 - 200}px, ${Math.random() * 400 - 200}px) rotate(${endRotation + 90}deg) scale(0)`, 
+                    opacity: 0 
+                }
+            ], {
+                duration: duration,
+                easing: 'ease-out'
+            }).onfinish = () => {
+                particle.remove();
+            };
+        }
+    </script>
+</body>
+</html>
