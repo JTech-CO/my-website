@@ -27,4 +27,4 @@ https://jtech-co.github.io/my-website/(프로그램 제목)%20(공백).html
 * **[Discord_Server_Boost_Benefits](https://jtech-co.github.io/my-website/Discord_Server_Boost_Benefits.html)**: 디스코드 부스트 기능 관련 설명
 * **[HTML이란](<https://jtech-co.github.io/my-website/HTML%EC%9D%B4%EB%9E%80.html>)**: 블로그 작성용 초간단 HTML 설명 페이지
 * **[데헷](<https://jtech-co.github.io/my-website/%EB%8D%B0%ED%97%B7.html>)**: 네이버 지식인 답변용 재미 사이트
-* 
+* **[MLP](<https://jtech-co.github.io/my-website/MLP.html>)**: Middle Landing Padge, 링크드인 대체용 중간 허브
