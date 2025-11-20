@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background of Floaters</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #fdfcf8;
+        }
+
+        #canvas {
+            display: block;
+        }
+
+        /* 상단 제목 */
+        #title {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 14px;
+            color: #aaa;
+            letter-spacing: 1px;
+            pointer-events: none;
+            user-select: none;
+            z-index: 10;
+        }
+
+        /* 안내 문구 */
+        #info {
+            position: absolute;
+            bottom: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 11px;
+            color: #ddd;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* 링크 */
+        #developer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 12px;
+            color: #aaa;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            z-index: 20;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        #developer:hover {
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="title">Background of Floaters</div>
+    <div id="info">Scroll to Zoom | Click to Ripple</div>
+    
+    <!-- 개발자 -->
+    <a id="developer" href="https://x.com/D_Sekhar_14" target="_blank">Developer</a>
+    
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let floaters = [];
+        let ripples = [];
+
+        // Scale
+        const minScale = 0.5; // 최소 배율
+        const maxScale = 2.0; // 최대 배율
+        let scale = 1.0; // 초기 배율
+
+        // 마우스 상태
+        let rawMouse = { x: -1000, y: -1000 };
+        let worldMouse = { x: -1000, y: -1000 };
+
+        // 루프 경계 계산
+        let boundaryWidth, boundaryHeight;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            boundaryWidth = (width / minScale) / 2;
+            boundaryHeight = (height / minScale) / 2;
+
+            initFloaters();
+        }
+        window.addEventListener('resize', resize);
+
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        class Floater {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                const halfW = boundaryWidth || width;
+                const halfH = boundaryHeight || height;
+
+                this.x = width/2 + random(-halfW, halfW);
+                this.y = height/2 + random(-halfH, halfH);
+                
+                this.vx = random(-0.2, 0.2);
+                this.vy = random(-0.2, 0.2);
+                this.friction = 0.96; 
+                this.radius = random(5, 15); 
+                
+                this.type = Math.random() > 0.3 ? 'worm' : 'cell';
+                this.segments = [];
+                this.opacity = random(0.05, 0.3);
+                
+                if (this.type === 'worm') {
+                    let segCount = Math.floor(random(3, 8));
+                    let currentX = 0; // 로컬 좌표
+                    let currentY = 0;
+                    for (let i = 0; i < segCount; i++) {
+                        this.segments.push({x: currentX, y: currentY, r: random(2, 6)});
+                        currentX += random(-5, 5);
+                        currentY += random(5, 15);
+                    }
+                } else {
+                    this.segments.push({x: 0, y: 0, r: random(3, 8)});
+                    if (Math.random() > 0.5) {
+                         this.segments.push({x: random(-5, 5), y: random(-5, 5), r: random(2, 6)});
+                    }
+                }
+            }
+
+            update() {
+                // 마우스 회피
+                const dx = this.x - worldMouse.x;
+                const dy = this.y - worldMouse.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const interactionRadius = 150; 
+
+                if (dist < interactionRadius) {
+                    const force = (interactionRadius - dist) / interactionRadius;
+                    const angle = Math.atan2(dy, dx);
+                    this.vx += Math.cos(angle) * force * 0.5;
+                    this.vy += Math.sin(angle) * force * 0.5;
+                }
+
+                // 파동 상호작용
+                ripples.forEach(ripple => {
+                    const rdx = this.x - ripple.x;
+                    const rdy = this.y - ripple.y;
+                    const rDist = Math.sqrt(rdx * rdx + rdy * rdy);
+                    
+                    if (Math.abs(rDist - ripple.radius) < 25) { // 파동 세기
+                         const rAngle = Math.atan2(rdy, rdx);
+                         const blastForce = (1 - (ripple.radius / ripple.maxRadius)) * 0.5;
+                         this.vx += Math.cos(rAngle) * blastForce;
+                         this.vy += Math.sin(rAngle) * blastForce;
+                    }
+                });
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (Math.abs(this.vx) > 0.2) this.vx *= this.friction;
+                if (Math.abs(this.vy) > 0.2) this.vy *= this.friction;
+
+                // 화면 바깥 루프
+                const cx = width / 2;
+                const cy = height / 2;
+                const margin = 50;
+
+                if (this.x > cx + boundaryWidth + margin) {
+                    this.x = cx - boundaryWidth - margin;
+                }
+                else if (this.x < cx - boundaryWidth - margin) {
+                    this.x = cx + boundaryWidth + margin;
+                }
+                if (this.y > cy + boundaryHeight + margin) {
+                    this.y = cy - boundaryHeight - margin;
+                }
+                else if (this.y < cy - boundaryHeight - margin) {
+                    this.y = cy + boundaryHeight + margin;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                ctx.shadowBlur = 3;
+                ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+                ctx.fillStyle = `rgba(80, 80, 80, ${this.opacity})`;
+                ctx.strokeStyle = `rgba(60, 60, 60, ${this.opacity})`;
+                
+                ctx.beginPath();
+                if (this.type === 'worm') {
+                    ctx.lineWidth = 1;
+                    ctx.moveTo(this.segments[0].x, this.segments[0].y);
+                    for (let i = 1; i < this.segments.length; i++) {
+                         let xc = (this.segments[i].x + this.segments[i-1].x) / 2;
+                         let yc = (this.segments[i].y + this.segments[i-1].y) / 2;
+                         ctx.quadraticCurveTo(this.segments[i-1].x, this.segments[i-1].y, xc, yc);
+                    }
+                    ctx.stroke();
+                    this.segments.forEach(seg => {
+                        ctx.beginPath();
+                        ctx.arc(seg.x, seg.y, seg.r, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                    });
+                } else {
+                    this.segments.forEach(seg => {
+                        ctx.beginPath();
+                        ctx.arc(seg.x, seg.y, seg.r, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                    });
+                }
+                ctx.restore();
+            }
+        }
+
+        class Ripple {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 0;
+                this.maxRadius = Math.max(width, height) * (1 / minScale);
+                this.speed = 8;
+                this.opacity = 0.6;
+                this.active = true;
+            }
+
+            update() {
+                this.radius += this.speed;
+                this.opacity -= 0.005;
+                if (this.opacity <= 0) this.active = false;
+            }
+
+            draw() {
+                if (!this.active) return;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(180, 180, 180, ${this.opacity * 0.4})`;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function initFloaters() {
+            floaters = [];
+            const visibleArea = (width / minScale) * (height / minScale);
+            // 입자 밀도 조절
+            const densityDivisor = 25000;
+            const count = Math.floor(visibleArea / densityDivisor); 
+
+            for (let i = 0; i < count; i++) {
+                floaters.push(new Floater());
+            }
+        }
+
+        function animate() {
+            // 캔버스 초기화
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, width, height);
+
+            // 줌 적용
+            ctx.translate(width / 2, height / 2);
+            ctx.scale(scale, scale);
+            ctx.translate(-width / 2, -height / 2);
+
+            // 파동 범위
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                ripples[i].update();
+                ripples[i].draw();
+                if (!ripples[i].active) {
+                    ripples.splice(i, 1);
+                }
+            }
+
+            // 입자
+            floaters.forEach(floater => {
+                floater.update();
+                floater.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        function updateMouseCoords(e) {
+            rawMouse.x = e.clientX;
+            rawMouse.y = e.clientY;
+
+            worldMouse.x = (rawMouse.x - width / 2) / scale + width / 2;
+            worldMouse.y = (rawMouse.y - height / 2) / scale + height / 2;
+        }
+
+        window.addEventListener('mousemove', updateMouseCoords);
+
+        window.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomSensitivity = 0.001;
+            scale += e.deltaY * -zoomSensitivity;
+            scale = Math.min(Math.max(minScale, scale), maxScale);
+
+            // 줌 변경 시 좌표 갱신
+            worldMouse.x = (rawMouse.x - width / 2) / scale + width / 2;
+            worldMouse.y = (rawMouse.y - height / 2) / scale + height / 2;
+        }, { passive: false });
+
+        window.addEventListener('mouseleave', () => {
+            rawMouse.x = -1000;
+            rawMouse.y = -1000;
+            worldMouse.x = -1000;
+            worldMouse.y = -1000;
+        });
+
+        window.addEventListener('mousedown', (e) => {
+            const clickX = (e.clientX - width / 2) / scale + width / 2;
+            const clickY = (e.clientY - height / 2) / scale + height / 2;
+            ripples.push(new Ripple(clickX, clickY));
+        });
+
+        resize();
+        animate();
+
+    </script>
+</body>
+</html>
