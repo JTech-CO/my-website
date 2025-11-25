@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Interactive Void</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --particle-color: #ffffff;
+            --accent-color: #888888;
+            --ui-bg: rgba(255, 255, 255, 0.08);
+            --ui-border: rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f0f0f0;
+            --text-color: #1a1a1a;
+            --particle-color: #111111;
+            --accent-color: #666666;
+            --ui-bg: rgba(0, 0, 0, 0.06);
+            --ui-border: rgba(0, 0, 0, 0.1);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Helvetica Neue', 'Inter', Arial, sans-serif;
+            transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s ease;
+            touch-action: none;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #888888;
+            font-size: 0.9rem;
+            letter-spacing: 0.12rem;
+            text-transform: uppercase;
+            text-align: center;
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 2;
+            font-weight: 300;
+            user-select: none;
+            transition: opacity 0.5s ease;
+            width: 100%;
+            line-height: 1.6;
+        }
+
+        #controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 10;
+            align-items: flex-end;
+            pointer-events: none; 
+        }
+
+        #controls > * {
+            pointer-events: auto;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--ui-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--ui-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08rem;
+            color: var(--accent-color);
+            margin-right: 6px;
+            font-weight: 700;
+        }
+
+        .option {
+            font-size: 0.75rem;
+            cursor: pointer;
+            opacity: 0.4;
+            transition: opacity 0.2s, transform 0.2s;
+            font-weight: 400;
+            padding: 2px 4px;
+        }
+
+        .option:hover { opacity: 0.8; }
+        .option.active { opacity: 1; font-weight: 700; transform: scale(1.05); }
+
+        #theme-btn {
+            background: var(--ui-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 10px 18px;
+            border: 1px solid var(--ui-border);
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        #theme-btn:hover {
+            background: rgba(128, 128, 128, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* 링크 */
+        #developer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 12px;
+            color: #aaa;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            z-index: 20;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        #developer:hover {
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            #controls {
+                top: auto; bottom: 20px; right: 0; left: 0;
+                align-items: center; flex-direction: row;
+                flex-wrap: wrap; justify-content: center;
+                gap: 8px; padding: 0 10px;
+            }
+            .control-group { padding: 6px 12px; }
+            .label { display: none; }
+            .option { font-size: 0.7rem; padding: 4px 8px; }
+            #theme-btn { padding: 8px 14px; font-size: 0.65rem; }
+            #center-text { font-size: 0.7rem; width: 90%; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div id="center-text">
+        Scroll to Zoom<br>Hover to Repel &bull; Click to Pulse
+    </div>
+
+    <div id="controls">
+        <button id="theme-btn">Switch Theme</button>
+        
+        <div class="control-group">
+            <span class="label">Gravity</span>
+            <span class="option active" onclick="setGravity(0, this)">Zero</span>
+            <span class="option" onclick="setGravity(0.05, this)">Down</span>
+            <span class="option" onclick="setGravity(-0.05, this)">Up</span>
+        </div>
+
+        <div class="control-group">
+            <span class="label">Density</span>
+            <span class="option" onclick="setDensity('high', this)">High</span>
+            <span class="option active" onclick="setDensity('medium', this)">Med</span>
+            <span class="option" onclick="setDensity('low', this)">Low</span>
+        </div>
+    </div>
+
+    <!-- 개발자 -->
+    <a id="developer" href="https://x.com/D_Sekhar_14" target="_blank">Developer</a>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        // --- 설정 ---
+        const rawData = "𒈔 𒂝 𒀱 𒇫 𒂝 𒄆 𒄆 𒈔 𒇫 𒇫 𒀱 𒄆 𒄆 𒈔 𒂝 𒇫 𒂝 𒀱 𒇫 𒇫 𒅒 𒇫 𒅒 𒄆 𒅒 𒀱 𒇫 𒇫 𒀱 𒄆 𒄆 𒈔 𒈔 𒅒 𒀱 𒇫 𒄆 𒈔 𒈔 𒄆 𒈔 𒄆 𒇫 𒂝 𒄆 𒇫 𒀱 𒇫 𒅒 𒀱 𒇫 𒇫 𒂝 𒈔 𒅒 𒀱 𒇫 𒄆 𒈔 𒈔 𒄆 𒅒 𒈔 𒇫 𒂝 𒈔 𒄆 𒈔 𒅒 𒄆 𒈔 𒇫 𒅒 𒀱 𒇫 𒇫 𒂝 𒄆 𒄆 𒅒 𒄆 𒄆 𒅒 𒄆 𒇫 𒀱 𒀱 𒇫 𒀱 𒄆 𒇫 𒂝 𒀱 𒅒 𒀱 𒄆";
+        const uniqueChars = [...new Set(rawData.split(' ').filter(c => c.trim() !== ''))];
+        
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        
+        // 화면 크기
+        let width, height;
+        // 월드 경계
+        let worldWidth, worldHeight;
+        
+        // 스케일
+        const MIN_SCALE = 0.4; // 최소 배율
+        const MAX_SCALE = 2.5; // 최대 배율
+        let currentScale = 0.6; // 현재 배율
+        let targetScale = 0.6;  // 목표 배율
+        
+        // 물리
+        let gravityY = 0;
+        let density = 'medium';
+        const counts = { high: 400, medium: 200, low: 80 };
+        
+        // 입자 & 펄스
+        let particles = [];
+        let pulses = [];
+        
+        // 마우스 상태
+        let mouse = { x: -9999, y: -9999 };
+        
+        // --- 초기화 ---
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            
+            // DPI 처리
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            // 월드 경계 계산
+            worldWidth = width / MIN_SCALE;
+            worldHeight = height / MIN_SCALE;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // --- 클래스 ---
+        class Particle {
+            constructor() {
+                this.init(true);
+            }
+
+            init(randomSpawn = false) {
+                this.char = uniqueChars[Math.floor(Math.random() * uniqueChars.length)];
+                
+                const halfW = worldWidth / 2;
+                const halfH = worldHeight / 2;
+                
+                if (randomSpawn) {
+                    this.x = (Math.random() - 0.5) * worldWidth;
+                    this.y = (Math.random() - 0.5) * worldHeight;
+                } else {
+                    this.x = 0; 
+                    this.y = 0; 
+                }
+
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
+                
+                this.size = Math.random() * 20 + 14; 
+                this.friction = 0.96;
+            }
+
+            update() {
+                // 마우스 좌표 변환
+                const screenCX = width / 2;
+                const screenCY = height / 2;
+                
+                const worldMouseX = (mouse.x - screenCX) / currentScale;
+                const worldMouseY = (mouse.y - screenCY) / currentScale;
+
+                // 마우스 회피
+                const dx = this.x - worldMouseX;
+                const dy = this.y - worldMouseY;
+                const distSq = dx*dx + dy*dy;
+                const radius = 180;
+
+                if (distSq < radius * radius) {
+                    const dist = Math.sqrt(distSq);
+                    const force = (radius - dist) / radius;
+                    const angle = Math.atan2(dy, dx);
+                    
+                    const str = 1.5;
+                    this.vx += Math.cos(angle) * force * str;
+                    this.vy += Math.sin(angle) * force * str;
+                }
+
+                // 중력
+                this.vy += gravityY;
+
+                // 이동
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 마찰
+                if (Math.abs(this.vx) > 0.4) this.vx *= this.friction;
+                if (Math.abs(this.vy) > 0.4) this.vy *= this.friction;
+
+                // 최소 드리프트
+                const minSpeed = 0.2;
+                if (Math.abs(this.vx) < minSpeed && Math.abs(this.vy) < minSpeed) {
+                    this.vx += (Math.random() - 0.5) * 0.02;
+                    this.vy += (Math.random() - 0.5) * 0.02;
+                }
+
+                // 무한 래핑
+                const halfW = worldWidth / 2;
+                const halfH = worldHeight / 2;
+                const padding = 50;
+
+                if (this.x > halfW + padding) this.x = -halfW - padding;
+                else if (this.x < -halfW - padding) this.x = halfW + padding;
+
+                if (this.y > halfH + padding) this.y = -halfH - padding;
+                else if (this.y < -halfH - padding) this.y = halfH + padding;
+            }
+
+            draw() {
+                ctx.font = `${this.size}px serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.char, this.x, this.y);
+            }
+
+            applyImpulse(originX, originY, force) {
+                const dx = this.x - originX;
+                const dy = this.y - originY;
+                const d = Math.sqrt(dx*dx + dy*dy);
+                const r = 500; // 충격파 반경
+
+                if (d < r) {
+                    const angle = Math.atan2(dy, dx);
+                    const f = force * (1 - d/r);
+                    this.vx += Math.cos(angle) * f;
+                    this.vy += Math.sin(angle) * f;
+                }
+            }
+        }
+
+        class Ripple {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 0;
+                this.maxRadius = 500;
+                this.speed = 12;
+                this.alpha = 0.8;
+            }
+
+            update() {
+                this.radius += this.speed;
+                this.alpha -= 0.025;
+            }
+
+            draw() {
+                if (this.alpha <= 0) return;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = this.alpha * 0.4;
+                ctx.stroke();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        // --- 로직 ---
+        function initParticles() {
+            particles = [];
+            // 입자 밀도 조절
+            const count = counts[density];
+            for(let i=0; i<count; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            // 부드러운 줌 보간
+            const lerpFactor = 0.1;
+            if (Math.abs(targetScale - currentScale) > 0.001) {
+                currentScale += (targetScale - currentScale) * lerpFactor;
+            } else {
+                currentScale = targetScale;
+            }
+
+            // 테마 색상 가져오기
+            const style = getComputedStyle(document.body);
+            const bgColor = style.getPropertyValue('--bg-color');
+            const pColor = style.getPropertyValue('--particle-color');
+
+            // 캔버스 초기화
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, width, height);
+
+            // 줌 적용
+            ctx.save();
+            ctx.translate(width/2, height/2);
+            ctx.scale(currentScale, currentScale);
+
+            ctx.fillStyle = pColor;
+            ctx.strokeStyle = pColor;
+
+            // 입자
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // 펄스
+            for (let i = pulses.length - 1; i >= 0; i--) {
+                pulses[i].update();
+                pulses[i].draw();
+                if (pulses[i].alpha <= 0) pulses.splice(i, 1);
+            }
+
+            ctx.restore();
+            
+            requestAnimationFrame(animate);
+        }
+
+        // --- 이벤트 리스너 ---
+
+        function handleInput(x, y, isClick) {
+            if (isClick) {
+                // 클릭 위치를 월드 좌표로 변환
+                const cx = width / 2;
+                const cy = height / 2;
+                const wx = (x - cx) / currentScale;
+                const wy = (y - cy) / currentScale;
+
+                pulses.push(new Ripple(wx, wy));
+                particles.forEach(p => p.applyImpulse(wx, wy, 15));
+            } else {
+                // 마우스 위치 업데이트
+                mouse.x = x;
+                mouse.y = y;
+            }
+        }
+
+        window.addEventListener('mousemove', e => handleInput(e.clientX, e.clientY, false));
+        window.addEventListener('mousedown', e => handleInput(e.clientX, e.clientY, true));
+        window.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+
+        window.addEventListener('touchstart', e => {
+            if(e.target.tagName !== 'BUTTON' && !e.target.classList.contains('option')) {
+                const t = e.touches[0];
+                handleInput(t.clientX, t.clientY, true);
+                mouse.x = t.clientX; mouse.y = t.clientY;
+            }
+        }, {passive: false});
+
+        window.addEventListener('touchmove', e => {
+             if(e.target.tagName !== 'BUTTON' && !e.target.classList.contains('option')) {
+                const t = e.touches[0];
+                handleInput(t.clientX, t.clientY, false);
+             }
+        }, {passive: false});
+
+        window.addEventListener('wheel', e => {
+            if (e.ctrlKey) return;
+            e.preventDefault();
+            const delta = e.deltaY * -0.0015;
+            targetScale += delta;
+            targetScale = Math.min(Math.max(MIN_SCALE, targetScale), MAX_SCALE);
+            // 줌 변경 시 좌표 갱신
+        }, {passive: false});
+
+        // --- UI 컨트롤 ---
+        window.setGravity = (v, el) => {
+            gravityY = v;
+            updateActiveState(el);
+        };
+
+        window.setDensity = (d, el) => {
+            density = d;
+            updateActiveState(el);
+            initParticles();
+        };
+
+        function updateActiveState(el) {
+            el.parentElement.querySelectorAll('.option').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        document.getElementById('theme-btn').addEventListener('click', function() {
+            const b = document.body;
+            const mode = b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            b.setAttribute('data-theme', mode);
+            this.innerText = mode === 'dark' ? 'Switch Theme' : 'Switch Theme';
+        });
+
+        initParticles();
+        animate();
+
+    </script>
+</body>
+</html>
