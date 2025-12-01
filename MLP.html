@@ -1,306 +1,396 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JTech Middle Landing Page</title>
+    <title>JTech - Connect Ideas</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        @font-face {
-            font-family: 'Neon Font';
-            src: url('https://fonts.cdnfonts.com/s/32954/OuterSans-Outline.woff') format('woff');
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --accent-color: #B7F0B1; /* JTech Original Green */
+            --text-main: #ffffff;
+            --text-sub: #a1a1a1;
+            --transition-speed: 0.4s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            background-color: #000;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
-            user-select: none; /* 텍스트 복사 방지 */
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
+            /* 그라데이션 */
+            background-image: radial-gradient(circle at 50% 10%, rgba(183, 240, 177, 0.05) 0%, transparent 50%);
         }
 
-        body::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 2px solid;
-            animation: glowingBorder 5s infinite alternate;
-            pointer-events: none;
-            box-sizing: border-box;
-            border-radius: 10px;
-        }
-
-        @keyframes glowingBorder {
-            0% { border-color: #B7F0B1; }
-            33% { border-color: #B2CCFF; }
-            66% { border-color: #FF9436; }
-            100% { border-color: #B7F0B1; }
-        }
-
-        .title {
-            font-family: 'Neon Font', sans-serif;
-            font-size: 4em;
-            color: transparent;
-            -webkit-text-stroke: 2px #B7F0B1;
-            margin-bottom: 50px;
+        /* --- Header & Title --- */
+        .header {
             text-align: center;
-            white-space: nowrap;
-            letter-spacing: 2px;
-            cursor: default;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out forwards;
+            position: relative;
+            z-index: 2;
         }
 
-        /* JTech 스트로크 span에 Liquid Metal 스타일 적용 */
-        .jtech-liquid-span {
-            position: relative;
-            z-index: 1;
-            background-color: transparent;
-            border: 2px solid transparent;
-            overflow: hidden;
-            padding: 0 10px;
-            border-radius: 5px;
+        .brand-pill {
             display: inline-flex;
             align-items: center;
-            box-sizing: border-box;
+            padding: 8px 16px;
+            background: rgba(183, 240, 177, 0.1);
+            border: 1px solid rgba(183, 240, 177, 0.3);
+            border-radius: 50px;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: border-color 0.3s ease-out;
-            height: 1.2em;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
         }
 
-        .jtech-liquid-span::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(183, 240, 177, 0.2);
-            transform: skewX(-25deg); /* 대각선 */
-            transition: all 0.5s ease-out;
-            z-index: -1;
+        .brand-pill:hover {
+            background: rgba(183, 240, 177, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(183, 240, 177, 0.2);
         }
 
-        .jtech-liquid-span:hover {
-            -webkit-text-stroke: 2px #B7F0B1;
-            border-color: rgba(183, 240, 177, 0.5);
-        }
-
-        .jtech-liquid-span:hover::before {
-            left: 0;
-            transform: skewX(0);
-        }
-
-        .jtech-liquid-span:active {
-            transform: scale(0.98);
-        }
-
-
-        .app-container {
-            display: flex;
-            gap: 40px;
-            filter: none;
-            transition: filter 0.3s ease-in-out;
-        }
-
-        .app-container.blurred .app:not(:hover) {
-            filter: blur(5px);
-            transition: filter 0.3s ease-in-out;
-        }
-
-        .app {
-            width: 150px;
-            height: 150px;
-            background-color: transparent;
-            border: 2px solid #B7F0B1;
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-        }
-
-        .app:hover {
-            animation: glowingAppBorder 2s infinite alternate;
-            z-index: 10;
-        }
-
-        .app.github i { /* GitHub */
-            font-size: 80px;
-            color: #B7F0B1;
-        }
-
-        .app.kmong span { /* Kmong */
-            font-family: Arial, sans-serif;
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #B7F0B1;
-        }
-
-        .app.youtube i { /* YouTube */
-            font-size: 80px;
-            color: #B7F0B1;
-        }
-
-        .app.naver-smartstore span { /* Naver Smart Store */
-            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #B7F0B1;
-            text-align: center;
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(180deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
             line-height: 1.2;
         }
 
-        @keyframes glowingAppBorder {
-            0% { border-color: #B7F0B1; box-shadow: 0 0 10px #B7F0B1; }
-            33% { border-color: #B2CCFF; box-shadow: 0 0 10px #B2CCFF; }
-            66% { border-color: #FF9436; box-shadow: 0 0 10px #FF9436; }
-            100% { border-color: #B7F0B1; box-shadow: 0 0 10px #B7F0B1; }
+        .sub-title {
+            font-size: 1.2rem;
+            color: var(--text-sub);
+            font-weight: 300;
+            margin-top: 10px;
         }
 
-        .popup-overlay { /* 팝업 오버레이 */
-            display: flex;
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* --- Grid Container --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2x2 */
+            gap: 20px;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 100;
+            max-width: 600px;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        /* --- Card --- */
+        .card {
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            text-decoration: none;
+            overflow: hidden;
+            transition: transform var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.27);
+            cursor: pointer;
+            animation: fadeInUp 0.8s ease-out forwards;
             opacity: 0;
-            visibility: hidden;
-            transition: opacity 1s ease-in-out, visibility 1s ease-in-out; /* 페이드인&아웃 */
+            backdrop-filter: blur(10px);
         }
 
-        .popup-overlay.show { /* 팝업 보이기 */
+        /* Staggered Animation */
+        .card:nth-child(1) { animation-delay: 0.2s; }
+        .card:nth-child(2) { animation-delay: 0.3s; }
+        .card:nth-child(3) { animation-delay: 0.4s; }
+        .card:nth-child(4) { animation-delay: 0.5s; }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(183, 240, 177, 0.3);
+        }
+
+        /* Card Content */
+        .card-icon {
+            font-size: 3.5rem;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+            z-index: 2;
+        }
+
+        .card-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
+
+        .card:hover .card-icon { color: var(--accent-color); }
+        .card:hover .card-label { color: #fff; }
+
+        /* Spotlight Effect */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(
+                800px circle at var(--mouse-x) var(--mouse-y), 
+                rgba(255, 255, 255, 0.06), 
+                transparent 40%
+            );
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .grid-container:hover .card::before {
+            opacity: 1;
+        }
+
+        /* --- Popup Modal --- */
+        .popup-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .popup-overlay.show {
             opacity: 1;
             visibility: visible;
         }
 
-        .popup-content { /* 팝업 콘텐츠 */
-            background-color: #1a1a1a;
-            border: 2px solid #B7F0B1;
-            border-radius: 15px;
-            padding: 30px;
-            width: 80%;
-            max-width: 800px;
-            text-align: center;
-            color: #E0E0E0;
-            font-family: sans-serif;
-            line-height: 1.6;
+        .popup-content {
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 90%;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
-            box-shadow: 0 0 20px rgba(183, 240, 177, 0.5);
-            user-select: none;
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
+            text-align: left;
         }
 
-        .popup-content p { /* 팝업 문단 */
+        .popup-overlay.show .popup-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+
+        .popup-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover { color: #fff; }
+
+        .popup-body p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #ccc;
             margin-bottom: 15px;
         }
 
-        .close-button {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 2em;
-            color: #B7F0B1;
-            cursor: pointer;
-            text-decoration: none;
+        .popup-body p:last-child { margin-bottom: 0; }
+
+        /* --- Footer --- */
+        .footer {
+            margin-top: 50px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+            animation: fadeIn 1.5s ease-out;
         }
 
-        .footer {
-            position: absolute;
-            bottom: 20px;
-            color: #B7F0B1;
-            font-family: sans-serif;
-            font-size: 0.9em;
-            text-align: center;
+        /* --- Animations --- */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 600px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+                max-width: 340px;
+            }
+            .card {
+                height: 160px;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 0 30px;
+                gap: 20px;
+            }
+            .main-title { font-size: 2.5rem; }
+            .card-icon { font-size: 2.5rem; margin-bottom: 0; }
+            .popup-content { padding: 30px 20px; }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <h1 class="title" id="jtechTitle">
-        <span class="jtech-liquid-span">JTech</span> Middle Landing Page
-    </h1>
-    <div class="app-container">
-        <a href="https://github.com/JTech-CO" target="_blank" class="app github">
-            <i class="fab fa-github"></i>
-        </a>
-        <a href="https://kmong.com/@JTech" target="_blank" class="app kmong">
-            <span>Kmong</span>
-        </a>
-        <a href="https://www.youtube.com/@JTech_Corp" target="_blank" class="app youtube">
-            <i class="fab fa-youtube"></i>
-        </a>
-        <a href="https://smartstore.naver.com/jtech_co" target="_blank" class="app naver-smartstore">
-            <span>네이버<br>스마트스토어</span>
-        </a>
-    </div>
 
-    <!-- Popup -->
-    <div class="popup-overlay" id="jtechPopup">
+    <!-- Header -->
+    <header class="header">
+        <div class="brand-pill" id="brandBtn">
+            <i class="fa-solid fa-bolt" style="margin-right:8px;"></i> What is JTech?
+        </div>
+        <h1 class="main-title">JTech</h1>
+        <p class="sub-title">Middle Landing Page</p>
+    </header>
+
+    <main class="grid-container" id="gridContainer">
+        
+        <!-- GitHub -->
+        <a href="https://github.com/JTech-CO" target="_blank" class="card">
+            <i class="fab fa-github card-icon"></i>
+            <span class="card-label">GitHub</span>
+        </a>
+
+        <!-- Kmong -->
+        <a href="https://kmong.com/@JTech" target="_blank" class="card">
+            <i class="fa-solid fa-k card-icon"></i>
+            <span class="card-label">Kmong</span>
+        </a>
+
+        <!-- YouTube -->
+        <a href="https://www.youtube.com/@JTech_Corp" target="_blank" class="card">
+            <i class="fab fa-youtube card-icon"></i>
+            <span class="card-label">YouTube</span>
+        </a>
+
+        <!-- Naver SmartStore -->
+        <a href="https://smartstore.naver.com/jtech_co" target="_blank" class="card">
+            <i class="fa-solid fa-store card-icon"></i>
+            <span class="card-label">Smart Store</span>
+        </a>
+
+    </main>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" id="popupOverlay">
         <div class="popup-content">
-            <a href="#" class="close-button" id="closePopup">&times;</a>
-            <p>JTech(제이택)은 "내가 좋아하는 일을 사업으로"라는 목표로 탄생한 1인 콘텐츠 스튜디오입니다.</p>
-            <p>'쉽지만 깊이 있게'라는 핵심 원칙 아래, 기술·디자인·개발 지식을 연결하는 다양한 콘텐츠를 만듭니다.</p>
-            <p>주요 활동으로는 기술·과학 분야 전자책·실물서 집필부터 해외 논문 번역·요약, 과학/공학 트렌드 연재, 3D 모델링, 프로그램 개발, 실무용 템플릿 제작까지 폭넓게 다룹니다. JTech은 아이디어가 가치로 이어지는 이 모든 과정을 기록하고 공유하며, 자동화 도구가 대신할 수 없는 이해·응용·창의의 힘을 대학생부터 실무자까지 널리 확산시키고자 합니다.</p>
+            <div class="popup-header">
+                <span class="popup-title">About JTech</span>
+                <button class="close-btn" id="closeBtn">&times;</button>
+            </div>
+            <div class="popup-body">
+                <p><strong>"내가 좋아하는 일을 사업으로"</strong><br>JTech(제이택)은 이 목표로 탄생한 1인 콘텐츠 스튜디오입니다.</p>
+                <p>'쉽지만 깊이 있게'라는 원칙 아래, 기술·디자인·개발 지식을 연결하는 다양한 콘텐츠를 제작합니다.</p>
+                <p>전자책 집필, 해외 논문 번역, 3D 모델링, 프로그램 개발 등 아이디어가 가치로 이어지는 과정을 기록하고 공유합니다. 자동화 도구가 대신할 수 없는 창의의 힘을 널리 확산시키고자 합니다.</p>
+            </div>
         </div>
     </div>
 
-    <div class="footer"> <!-- 하단 저작권 표시 -->
+    <!-- Footer -->
+    <footer class="footer">
         © 2025 JTech CO. All rights reserved.
-    </div>
+    </footer>
 
     <script>
-        const appContainer = document.querySelector('.app-container');
-        const apps = document.querySelectorAll('.app');
-        const jtechLiquidSpan = document.querySelector('.jtech-liquid-span'); // JTech span
-        const jtechPopup = document.getElementById('jtechPopup');
-        const closePopup = document.getElementById('closePopup');
+        /* --- Spotlight Effect --- */
+        const gridContainer = document.getElementById("gridContainer");
+        const cards = document.querySelectorAll(".card");
 
-        apps.forEach(app => {
-            app.addEventListener('mouseenter', () => {
-                appContainer.classList.add('blurred');
+        gridContainer.addEventListener("mousemove", (e) => {
+            cards.forEach((card) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
             });
-
-            app.addEventListener('mouseleave', () => {
-                appContainer.classList.remove('blurred');
-            });
         });
 
-        jtechLiquidSpan.addEventListener('click', () => { // JTech span 클릭 시
-            jtechPopup.classList.add('show'); // 페이드인
+        /* --- Popup Logic --- */
+        const brandBtn = document.getElementById('brandBtn');
+        const popupOverlay = document.getElementById('popupOverlay');
+        const closeBtn = document.getElementById('closeBtn');
+
+        // Open Popup
+        brandBtn.addEventListener('click', () => {
+            popupOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
         });
 
-        closePopup.addEventListener('click', (e) => { // X 버튼 클릭 시
-            e.preventDefault();
-            jtechPopup.classList.remove('show'); // 페이드아웃
+        // Close Popup
+        const closePopup = () => {
+            popupOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        };
+
+        closeBtn.addEventListener('click', closePopup);
+        popupOverlay.addEventListener('click', (e) => {
+            if (e.target === popupOverlay) {
+                closePopup();
+            }
         });
 
-        jtechPopup.addEventListener('click', (e) => {
-            if (e.target === jtechPopup) {
-                jtechPopup.classList.remove('show');
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && popupOverlay.classList.contains('show')) {
+                closePopup();
             }
         });
     </script>
