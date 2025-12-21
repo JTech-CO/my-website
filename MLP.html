@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JTech - Connect Ideas</title>
-    <!-- Google Fonts Inter -->
+    <title>JTech - System Interface</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-color: #050505;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --accent-color: #B7F0B1; /* JTech Original Green */
-            --text-main: #ffffff;
-            --text-sub: #a1a1a1;
-            --transition-speed: 0.4s;
+            --spx-bg-main: #000000;
+            --spx-bg-card: #050505;
+            --spx-accent: #B7F0B1; /* JTech Original Green */
+            --spx-border: #333333;
+            --spx-text-main: #e0e0e0;
+            --spx-text-muted: #888888;
+            
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --transition-speed: 0.2s;
         }
 
         * {
@@ -28,9 +32,9 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+            background-color: var(--spx-bg-main);
+            color: var(--spx-text-main);
+            font-family: var(--font-sans);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -38,154 +42,169 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            /* 그라데이션 */
-            background-image: radial-gradient(circle at 50% 10%, rgba(183, 240, 177, 0.05) 0%, transparent 50%);
+            
+            /* SpaceX Style Grid Background */
+            background-image: 
+                linear-gradient(rgba(51, 51, 51, 0.5) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(51, 51, 51, 0.5) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Decorative Top Bar */
+        .system-status {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--spx-accent);
+            opacity: 0.7;
         }
 
         /* --- Header & Title --- */
         .header {
             text-align: center;
             margin-bottom: 60px;
-            animation: fadeInDown 1s ease-out forwards;
+            width: 100%;
+            max-width: 600px;
+            padding: 0 20px;
             position: relative;
             z-index: 2;
         }
 
-        .brand-pill {
+        /* Technical Button Style */
+        .brand-btn {
             display: inline-flex;
             align-items: center;
-            padding: 8px 16px;
-            background: rgba(183, 240, 177, 0.1);
-            border: 1px solid rgba(183, 240, 177, 0.3);
-            border-radius: 50px;
-            color: var(--accent-color);
-            font-size: 0.9rem;
-            font-weight: 600;
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--spx-accent);
+            color: var(--spx-accent);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
+            transition: all var(--transition-speed) ease;
+            margin-bottom: 30px;
+            letter-spacing: 0.05em;
         }
 
-        .brand-pill:hover {
-            background: rgba(183, 240, 177, 0.2);
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(183, 240, 177, 0.2);
+        .brand-btn:hover {
+            background: var(--spx-accent);
+            color: var(--spx-bg-main);
         }
 
         .main-title {
+            font-family: var(--font-sans);
             font-size: 3.5rem;
             font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(180deg, #fff 0%, #888 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.03em;
+            color: #fff;
             margin: 0;
-            line-height: 1.2;
+            line-height: 1;
+            text-transform: uppercase;
         }
 
         .sub-title {
-            font-size: 1.2rem;
-            color: var(--text-sub);
-            font-weight: 300;
-            margin-top: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--spx-text-muted);
+            margin-top: 15px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-top: 1px solid var(--spx-border);
+            padding-top: 15px;
+            display: inline-block;
+            width: 100%;
         }
 
         /* --- Grid Container --- */
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2x2 */
-            gap: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
             width: 100%;
             max-width: 600px;
-            padding: 20px;
-            perspective: 1000px;
+            background-color: var(--spx-border);
+            border: 1px solid var(--spx-border);
+            padding: 1px;
         }
 
-        /* --- Card --- */
+        /* --- Card (Module) --- */
         .card {
             position: relative;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            height: 200px;
+            background: var(--spx-bg-card);
+            height: 180px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: space-between;
+            align-items: flex-start;
             text-decoration: none;
-            overflow: hidden;
-            transition: transform var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.27);
+            padding: 24px;
+            transition: all var(--transition-speed) ease;
             cursor: pointer;
-            animation: fadeInUp 0.8s ease-out forwards;
-            opacity: 0;
-            backdrop-filter: blur(10px);
         }
 
-        /* Staggered Animation */
-        .card:nth-child(1) { animation-delay: 0.2s; }
-        .card:nth-child(2) { animation-delay: 0.3s; }
-        .card:nth-child(3) { animation-delay: 0.4s; }
-        .card:nth-child(4) { animation-delay: 0.5s; }
-
         .card:hover {
-            transform: translateY(-5px) scale(1.02);
-            border-color: rgba(183, 240, 177, 0.3);
+            background: var(--spx-accent);
         }
 
         /* Card Content */
+        .card-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
         .card-icon {
-            font-size: 3.5rem;
-            color: var(--text-main);
-            margin-bottom: 15px;
-            transition: color 0.3s ease;
-            z-index: 2;
+            font-size: 2rem;
+            color: var(--spx-text-main);
+            transition: color var(--transition-speed) ease;
+        }
+
+        .card-arrow {
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            color: var(--spx-border);
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all var(--transition-speed) ease;
         }
 
         .card-label {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text-sub);
-            z-index: 2;
-            transition: color 0.3s ease;
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--spx-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color var(--transition-speed) ease;
         }
 
-        .card:hover .card-icon { color: var(--accent-color); }
-        .card:hover .card-label { color: #fff; }
-
-        /* Spotlight Effect */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(
-                800px circle at var(--mouse-x) var(--mouse-y), 
-                rgba(255, 255, 255, 0.06), 
-                transparent 40%
-            );
-            opacity: 0;
-            transition: opacity 0.5s;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .grid-container:hover .card::before {
-            opacity: 1;
+        /* Hover Effects */
+        .card:hover .card-icon { color: var(--spx-bg-main); }
+        .card:hover .card-label { color: var(--spx-bg-main); }
+        .card:hover .card-arrow { 
+            opacity: 1; 
+            transform: translateX(0); 
+            color: var(--spx-bg-main);
         }
 
         /* --- Popup Modal --- */
         .popup-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px); /* Minimal blur */
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
         }
 
         .popup-overlay.show {
@@ -194,136 +213,176 @@
         }
 
         .popup-content {
-            background: #111;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--spx-bg-main);
+            border: 1px solid var(--spx-accent);
             width: 90%;
             max-width: 600px;
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transform: scale(0.9) translateY(20px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            text-align: left;
+            padding: 0;
+            box-shadow: 0 0 30px rgba(183, 240, 177, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
         }
 
         .popup-overlay.show .popup-content {
-            transform: scale(1) translateY(0);
+            transform: translateY(0);
         }
 
         .popup-header {
+            background: rgba(183, 240, 177, 0.1);
+            padding: 15px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 15px;
+            border-bottom: 1px solid var(--spx-accent);
         }
 
         .popup-title {
-            font-size: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 1rem;
             font-weight: 700;
-            color: var(--accent-color);
+            color: var(--spx-accent);
+            text-transform: uppercase;
         }
 
         .close-btn {
             background: none;
             border: none;
-            color: var(--text-sub);
-            font-size: 1.5rem;
+            color: var(--spx-text-muted);
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: color 0.2s;
         }
 
-        .close-btn:hover { color: #fff; }
+        .close-btn:hover { color: var(--spx-accent); }
+
+        .popup-body {
+            padding: 30px 24px;
+        }
 
         .popup-body p {
-            font-size: 1rem;
-            line-height: 1.7;
-            color: #ccc;
-            margin-bottom: 15px;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: var(--spx-text-main);
+            margin-bottom: 20px;
+        }
+        
+        .popup-body p strong {
+            color: var(--spx-accent);
+            font-weight: 600;
         }
 
-        .popup-body p:last-child { margin-bottom: 0; }
+        .popup-footer {
+            padding: 10px 24px;
+            border-top: 1px solid var(--spx-border);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--spx-text-muted);
+            text-align: right;
+        }
 
         /* --- Footer --- */
         .footer {
-            margin-top: 50px;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.8rem;
-            animation: fadeIn 1.5s ease-out;
-        }
-
-        /* --- Animations --- */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            margin-top: 60px;
+            color: var(--spx-text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
         /* --- Responsive --- */
         @media (max-width: 600px) {
             .grid-container {
                 grid-template-columns: 1fr;
-                max-width: 340px;
+                background: transparent;
+                border: none;
+                gap: 15px;
             }
+            
             .card {
-                height: 160px;
+                height: 120px;
                 flex-direction: row;
-                justify-content: flex-start;
-                padding: 0 30px;
-                gap: 20px;
+                align-items: center;
+                border: 1px solid var(--spx-border);
             }
+            
+            .card-header {
+                width: auto;
+                order: 1;
+            }
+            
+            .card-icon {
+                font-size: 1.5rem;
+                margin-right: 15px;
+            }
+            
+            .card-label {
+                order: 2;
+                flex: 1;
+                font-size: 1.1rem;
+            }
+            
+            .card-arrow {
+                display: none;
+            }
+
             .main-title { font-size: 2.5rem; }
-            .card-icon { font-size: 2.5rem; margin-bottom: 0; }
-            .popup-content { padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
 
+    <div class="system-status">SYS.ONLINE // JTECH.CO</div>
+
     <!-- Header -->
     <header class="header">
-        <div class="brand-pill" id="brandBtn">
-            <i class="fa-solid fa-bolt" style="margin-right:8px;"></i> What is JTech?
-        </div>
+        <button class="brand-btn" id="brandBtn">
+            [ Identify Protocol ]
+        </button>
         <h1 class="main-title">JTech</h1>
-        <p class="sub-title">Middle Landing Page</p>
+        <div class="sub-title">
+            Connect Ideas // Establish Value
+        </div>
     </header>
 
-    <main class="grid-container" id="gridContainer">
+    <main class="grid-container">
         
         <!-- GitHub -->
         <a href="https://github.com/JTech-CO" target="_blank" class="card">
-            <i class="fab fa-github card-icon"></i>
+            <div class="card-header">
+                <i class="fab fa-github card-icon"></i>
+                <span class="card-arrow">→</span>
+            </div>
             <span class="card-label">GitHub</span>
         </a>
 
         <!-- Kmong -->
         <a href="https://kmong.com/@JTech" target="_blank" class="card">
-            <i class="fa-solid fa-k card-icon"></i>
+            <div class="card-header">
+                <i class="fa-solid fa-k card-icon"></i>
+                <span class="card-arrow">→</span>
+            </div>
             <span class="card-label">Kmong</span>
         </a>
 
         <!-- YouTube -->
         <a href="https://www.youtube.com/@JTech_Corp" target="_blank" class="card">
-            <i class="fab fa-youtube card-icon"></i>
+            <div class="card-header">
+                <i class="fab fa-youtube card-icon"></i>
+                <span class="card-arrow">→</span>
+            </div>
             <span class="card-label">YouTube</span>
         </a>
 
-        <!-- Naver SmartStore -->
+        <!-- Smart Store -->
         <a href="https://smartstore.naver.com/jtech_co" target="_blank" class="card">
-            <i class="fa-solid fa-store card-icon"></i>
-            <span class="card-label">Smart Store</span>
+            <div class="card-header">
+                <i class="fa-solid fa-store card-icon"></i>
+                <span class="card-arrow">→</span>
+            </div>
+            <span class="card-label">Store</span>
         </a>
 
     </main>
@@ -332,38 +391,26 @@
     <div class="popup-overlay" id="popupOverlay">
         <div class="popup-content">
             <div class="popup-header">
-                <span class="popup-title">About JTech</span>
-                <button class="close-btn" id="closeBtn">&times;</button>
+                <span class="popup-title">Mission Briefing: JTech</span>
+                <button class="close-btn" id="closeBtn">[ X ]</button>
             </div>
             <div class="popup-body">
                 <p><strong>"내가 좋아하는 일을 사업으로"</strong><br>JTech(제이택)은 이 목표로 탄생한 1인 콘텐츠 스튜디오입니다.</p>
                 <p>'쉽지만 깊이 있게'라는 원칙 아래, 기술·디자인·개발 지식을 연결하는 다양한 콘텐츠를 제작합니다.</p>
-                <p>전자책 집필, 해외 논문 번역, 3D 모델링, 프로그램 개발 등 아이디어가 가치로 이어지는 과정을 기록하고 공유합니다. 자동화 도구가 대신할 수 없는 창의의 힘을 널리 확산시키고자 합니다.</p>
+                <p>전자책 집필, 해외 논문 번역, 3D 모델링, 프로그램 개발 등 아이디어가 가치로 이어지는 과정을 기록하고 공유합니다.</p>
+            </div>
+            <div class="popup-footer">
+                STATUS: OPERATIONAL
             </div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-        © 2025 JTech CO. All rights reserved.
+        © 2025 JTech CO. All systems nominal.
     </footer>
 
     <script>
-        /* --- Spotlight Effect --- */
-        const gridContainer = document.getElementById("gridContainer");
-        const cards = document.querySelectorAll(".card");
-
-        gridContainer.addEventListener("mousemove", (e) => {
-            cards.forEach((card) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                card.style.setProperty("--mouse-x", `${x}px`);
-                card.style.setProperty("--mouse-y", `${y}px`);
-            });
-        });
-
         /* --- Popup Logic --- */
         const brandBtn = document.getElementById('brandBtn');
         const popupOverlay = document.getElementById('popupOverlay');
