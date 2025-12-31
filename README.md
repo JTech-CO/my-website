@@ -30,4 +30,5 @@ https://jtech-co.github.io/my-website/(프로그램 제목)%20(공백).html
 * **[MLP](<https://jtech-co.github.io/my-website/MLP.html>)**: Middle Landing Page, 링크드인 대체용 중간 허브
 * **[floaters](<https://jtech-co.github.io/my-website/floaters.html>)**: 비문증에서 착안한 마우스 상호작용형 배경화면
 * **[Interactive Void](<https://jtech-co.github.io/my-website/Interactive%20Void.html>)**: 위의 floaters를 바탕으로 만든 특수문자가 눈처럼 내리는 상호작용형 배경화면
+* **[2026 Progress Bar](<https://jtech-co.github.io/my-website/2026%20Progress%20Bar.html>)**: 2026 프로그레스 바
 * 
