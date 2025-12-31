@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Progress Bar</title>
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --spx-bg-main: #000000;
+            --spx-bg-card: #0a0a0a;
+            --spx-bg-input: #111111;
+            
+            --spx-text-primary: #e0e0e0;
+            --spx-text-secondary: #cccccc;
+            --spx-text-muted: #888888;
+            --spx-accent: #ffffff;
+            
+            --spx-border: #333333;
+            --spx-border-hover: #ffffff;
+            
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--spx-bg-main);
+            color: var(--spx-text-primary);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            gap: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        h1 {
+            color: var(--spx-accent);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            font-size: 2.4rem;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .percentage-display {
+            font-family: var(--font-mono);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--spx-accent);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .progress-wrapper {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--spx-bg-card);
+            border: 4px solid #ff4444;
+            padding: 10px;
+            transition: border-color 0.6s ease, box-shadow 0.6s ease;
+            z-index: 10;
+        }
+
+        .progress-container {
+            height: 90px;
+            background-color: #111111;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #ffffff;
+            transition: width 0.2s linear;
+        }
+
+        @keyframes rainbow-border-glow {
+            0%   { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
+            14%  { border-color: #ff7f00; box-shadow: 0 0 20px #ff7f00; }
+            28%  { border-color: #ffff00; box-shadow: 0 0 20px #ffff00; }
+            42%  { border-color: #00ff00; box-shadow: 0 0 20px #00ff00; }
+            57%  { border-color: #0000ff; box-shadow: 0 0 20px #0000ff; }
+            71%  { border-color: #4b0082; box-shadow: 0 0 20px #4b0082; }
+            85%  { border-color: #8b00ff; box-shadow: 0 0 20px #8b00ff; }
+            100% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
+        }
+
+        .glow-border {
+            animation: rainbow-border-glow 4s linear infinite;
+        }
+
+        .countdown {
+            font-family: var(--font-mono);
+            font-size: 1.4rem;
+            color: var(--spx-text-secondary);
+            letter-spacing: 0.05em;
+            text-align: center;
+            line-height: 1.8;
+            z-index: 10;
+        }
+
+        .settings-panel {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .settings-label {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--spx-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+
+        input[type="number"] {
+            background-color: var(--spx-bg-input);
+            border: 1px solid var(--spx-border);
+            color: var(--spx-accent);
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            padding: 10px 16px;
+            width: 220px;
+            text-align: center;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--spx-accent);
+        }
+
+        .spx-btn {
+            display: inline-block;
+            padding: 10px 24px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--spx-accent);
+            background: transparent;
+            border: 1px solid var(--spx-accent);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 12px;
+        }
+
+        .spx-btn:hover {
+            background: var(--spx-accent);
+            color: var(--spx-bg-main);
+        }
+
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #fireworks-canvas.active {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .percentage-display { font-size: 2.4rem; }
+            .progress-container { height: 70px; }
+            .countdown { font-size: 1.2rem; }
+            input[type="number"] { width: 100%; }
+            .spx-btn { width: 100%; margin-top: 16px; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.7rem; }
+            .percentage-display { font-size: 2rem; }
+            .progress-container { height: 60px; }
+            .countdown { font-size: 1.1rem; }
+        }
+
+        @media (min-height: 900px) {
+            body { gap: 30px; }
+            h1 { font-size: 2.8rem; }
+            .percentage-display { font-size: 3.5rem; }
+            .progress-container { height: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>2026 Progress Bar</h1>
+
+    <div class="percentage-display" id="percentage-display">0.00%</div>
+
+    <div class="progress-wrapper" id="progress-wrapper">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+    </div>
+
+    <div class="countdown" id="countdown">
+        Days remaining:<br>
+        Total Hours:<br>
+        Total Minutes:<br>
+        Total Seconds:
+    </div>
+
+    <div class="settings-panel">
+        <div class="settings-label">Timezone offset (e.g., UTC +9 or UTC -5)</div>
+        <input type="number" id="timezone" placeholder="0" step="1">
+        <button class="spx-btn" onclick="applyTimezone()">Apply</button>
+    </div>
+
+    <canvas id="fireworks-canvas"></canvas>
+
+    <script>
+        // 숫자 3자리마다 콤마 추가
+        function formatNumber(num) {
+            return Math.floor(num).toLocaleString('en-US');
+        }
+
+        // 소수점 3자리 유지
+        function formatWithDecimal(num) {
+            const [integerPart, decimalPart = ''] = num.toFixed(3).split('.');
+            return formatNumber(integerPart) + '.' + decimalPart;
+        }
+
+        const endDate = new Date('2027-01-01T00:00:00Z');
+        const startDate = new Date('2026-01-01T00:00:00Z');
+        const totalDurationMs = endDate - startDate;
+
+        let timezoneOffset = parseInt(localStorage.getItem('timezoneOffset') || '0');
+
+        const progressWrapper = document.getElementById('progress-wrapper');
+        const progressBar = document.getElementById('progress');
+        const percentageDisplay = document.getElementById('percentage-display');
+        const countdownEl = document.getElementById('countdown');
+        const timezoneInput = document.getElementById('timezone');
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let fireworksActive = false;
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, vx, vy, color, life) {
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.color = color;
+                this.life = life;
+                this.decay = 0.98;
+                this.gravity = 0.15;
+            }
+
+            update() {
+                this.vx *= this.decay;
+                this.vy *= this.decay;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life--;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.life / 100;
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x - 2, this.y - 2, 4, 4);
+                ctx.restore();
+            }
+        }
+
+        function createFirework(x = canvas.width / 2, y = canvas.height / 3) {
+            const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#8b00ff', '#ff00ff'];
+            const particleCount = 120;
+            for (let i = 0; i < particleCount; i++) {
+                const angle = (Math.PI * 2 * i) / particleCount;
+                const velocity = 3 + Math.random() * 6;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particles.push(new Particle(x, y, vx, vy, color, 100));
+            }
+        }
+
+        function animateFireworks() {
+            if (!fireworksActive) return;
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles = particles.filter(p => {
+                p.update();
+                p.draw();
+                return p.life > 0;
+            });
+
+            if (Math.random() < 0.15 && particles.length < 300) {
+                createFirework(
+                    Math.random() * canvas.width,
+                    Math.random() * (canvas.height * 0.5)
+                );
+            }
+
+            requestAnimationFrame(animateFireworks);
+        }
+
+        timezoneInput.value = timezoneOffset || '';
+
+        function applyTimezone() {
+            const val = timezoneInput.value.trim();
+            if (val === '') {
+                timezoneOffset = 0;
+            } else {
+                timezoneOffset = parseInt(val);
+                if (isNaN(timezoneOffset)) {
+                    alert('Please enter a valid integer number.');
+                    return;
+                }
+            }
+            localStorage.setItem('timezoneOffset', timezoneOffset);
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const now = new Date();
+            const adjustedNow = new Date(now.getTime() + timezoneOffset * 60 * 60 * 1000);
+
+            let elapsedMs = adjustedNow - startDate;
+            if (elapsedMs < 0) elapsedMs = 0;
+            if (elapsedMs > totalDurationMs) elapsedMs = totalDurationMs;
+
+            const percentage = (elapsedMs / totalDurationMs) * 100;
+            progressBar.style.width = percentage + '%';
+            percentageDisplay.textContent = percentage.toFixed(2) + '%';
+
+            const floorPercent = Math.floor(percentage);
+            const fractionalPart = percentage - floorPercent;
+
+            if (floorPercent % 5 === 0 && fractionalPart < 1 && percentage > 0 && percentage < 100) {
+                progressWrapper.classList.add('glow-border');
+            } else {
+                progressWrapper.classList.remove('glow-border');
+            }
+
+            let remainingMs = endDate - adjustedNow;
+            if (remainingMs < 0) remainingMs = 0;
+
+            const totalSeconds = Math.floor(remainingMs / 1000);
+            const totalMinutes = remainingMs / (1000 * 60);
+            const totalHours = remainingMs / (1000 * 60 * 60);
+            const days = Math.floor(totalHours / 24);
+
+            // 콤마 자리표시
+            const formattedHours = formatWithDecimal(totalHours);
+            const formattedMinutes = formatWithDecimal(totalMinutes);
+            const formattedSeconds = formatNumber(totalSeconds);
+
+            countdownEl.innerHTML = `
+                Days remaining: ${formatNumber(days)}<br>
+                Total Hours: ${formattedHours}<br>
+                Total Minutes: ${formattedMinutes}<br>
+                Total Seconds: ${formattedSeconds}
+            `;
+
+            if (remainingMs <= 0 && !fireworksActive) {
+                percentageDisplay.textContent = '100.00%';
+                progressWrapper.classList.remove('glow-border');
+                countdownEl.innerHTML = 'Happy New Year 2027!<br>2026 has ended.';
+
+                canvas.classList.add('active');
+                fireworksActive = true;
+                animateFireworks();
+
+                setInterval(() => {
+                    if (fireworksActive) {
+                        createFirework(Math.random() * canvas.width, Math.random() * (canvas.height * 0.5));
+                    }
+                }, 800);
+            }
+        }
+
+        setInterval(updateProgress, 1000);
+        updateProgress();
+    </script>
+</body>
+</html>
